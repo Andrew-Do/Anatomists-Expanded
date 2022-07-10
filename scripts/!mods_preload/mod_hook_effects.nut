@@ -22,7 +22,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/morale.png",
-					text = "Not affected by nighttime penalties" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+3[/color] Vision" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Ranged Skill" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Skill"
+					text = "Not affected by nighttime penalties" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+2[/color] Vision"
 				},
 				{
 					id = 12,
@@ -38,9 +38,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		o.onUpdate = function(_properties)
 		{
 			onUpdate(_properties);
-			_properties.Vision += 3;
-			_properties.MeleeSkill += 10;
-			_properties.RangedSkill += 10;
+			_properties.Vision += 2;
 		}
 
 	});
@@ -578,90 +576,423 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 	});
 
-	// ::mods_hookExactClass("skills/effects/alp_potion_effect", function (o)
-	// {
-	// 	local getTooltip = ::mods_getMember(o, "getTooltip");
-	// 	o.getTooltip = function()
-	// 	{
-	// 		local ret = [
-	// 			{
-	// 				id = 1,
-	// 				type = "title",
-	// 				text = this.getName()
-	// 			},
-	// 			{
-	// 				id = 2,
-	// 				type = "description",
-	// 				text = this.getDescription()
-	// 			},
-	// 			{
-	// 				id = 11,
-	// 				type = "text",
-	// 				icon = "ui/icons/morale.png",
-	// 				text = "Not affected by nighttime penalties\n" + "[color=" + this.Const.UI.Color.PositiveValue + "]+3[/color] Vision"
-	// 			},
-	// 			{
-	// 				id = 12,
-	// 				type = "hint",
-	// 				icon = "ui/tooltips/warning.png",
-	// 				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
-	// 			}
-	// 		];
-	// 		return ret;
-	// 	}
+	//"Hyperactive Glands";
+	//"This character\'s adrenaline and hormonal glands have mutated, causing a constant heightened emotional state. They can mostly keep this under control in camp, but in high-stress situations the effect is much stronger and fills them with an intense, unconsolable rage.";
+	::mods_hookExactClass("skills/effects/orc_berserker_potion_effect", function (o)
+	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.Name = "Hyperactive Glands";
+		}
+		
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "This character gains two stacks of Rage each time they take hitpoint damage, and loses one stack at the end of each turn."
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
 
-	// 	local onUpdate = ::mods_getMember(o, "onUpdate");
-	// 	o.onUpdate = function(_properties)
-	// 	{
-	// 		onUpdate(_properties);
-	// 		_properties.Vision += 3;
-	// 	}
+	});
 
-	// });
+	//"Improved Limbic System";
+	//"This character\'s limbic system has been altered with an additional substance that allows them to sustain particularly strenuous anaerobic activity for longer. Their skin seems vaguely greener than you remember, too, but you\'re sure that\'s a coincidence.";
+	::mods_hookExactClass("skills/effects/orc_warlord_potion_effect", function (o)
+	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.Name = "Improved Limbic System";
+		}
 
-	// ::mods_hookExactClass("skills/effects/alp_potion_effect", function (o)
-	// {
-	// 	local getTooltip = ::mods_getMember(o, "getTooltip");
-	// 	o.getTooltip = function()
-	// 	{
-	// 		local ret = [
-	// 			{
-	// 				id = 1,
-	// 				type = "title",
-	// 				text = this.getName()
-	// 			},
-	// 			{
-	// 				id = 2,
-	// 				type = "description",
-	// 				text = this.getDescription()
-	// 			},
-	// 			{
-	// 				id = 11,
-	// 				type = "text",
-	// 				icon = "ui/icons/morale.png",
-	// 				text = "Not affected by nighttime penalties\n" + "[color=" + this.Const.UI.Color.PositiveValue + "]+3[/color] Vision"
-	// 			},
-	// 			{
-	// 				id = 12,
-	// 				type = "hint",
-	// 				icon = "ui/tooltips/warning.png",
-	// 				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
-	// 			}
-	// 		];
-	// 		return ret;
-	// 	}
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/fatigue.png",
+					text = "Using orc weapons no longer imposes additional fatigue costs" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Fatigue"
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
 
-	// 	local onUpdate = ::mods_getMember(o, "onUpdate");
-	// 	o.onUpdate = function(_properties)
-	// 	{
-	// 		onUpdate(_properties);
-	// 		_properties.Vision += 3;
-	// 	}
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+			onUpdate(_properties);
+			_properties.Stamina += 20;
+		}
 
-	// });
+	});
+
+	//"Sensory Redundancy";
+	//"This character\'s body has mutated to develop a number of redundant synapses, allowing them to maintain a degree of control over sight, hearing, and muscle control even when struck with debilitating blows.";
+	::mods_hookExactClass("skills/effects/orc_warrior_potion_effect", function (o)
+	{
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "[color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Hitpoints"
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
+
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+			onUpdate(_properties);
+			_properties.Hitpoints += 20;
+		}
+
+	});
+
+	//"Shock Absorbant Wrists";
+	//"This character\'s wrists have mutated in such a way that the they dampen the initial shock of opposing forces. In more practical terms, they reduce the protective qualities of an enemy\'s armor when struck. They can also make some pretty outlandish shadow puppets.";
+	::mods_hookExactClass("skills/effects/orc_young_potion_effect", function (o)
+	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.Name = "Shock Absorbant Wrists";
+		}
+
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/armor_damage.png",
+					text = "Attacks have an additional [color=" + this.Const.UI.Color.PositiveValue + "]+40%[/color] effectiveness against armor"
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
+
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+			_properties.DamageArmorMult += 0.4;
+		}
+
+	});
+
+	//"Flexile Ligaments";
+	//"This character\'s legs have mutated to respond much more rapidly and powerfully to external force. As a practical matter, they can maintain their center of balance and respond to nearly any attempt to push them back or uproot them.";
+	::mods_hookExactClass("skills/effects/schrat_potion_effect", function (o)
+	{
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "Immune to being knocked back or grabbed" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Defense"
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
+
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+			onUpdate(_properties);
+			_properties.MeleeDefense += 10;
+		}
+
+	});
+
+	//TODO: Rework effect to venom on piercing/cutting attacks
+	::mods_hookExactClass("skills/effects/serpent_potion_effect", function (o)
+	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.Name = "Venom Glands";
+		}
+
+		local getDescription = ::mods_getMember(o, "getDescription");
+		o.getDescription = function()
+		{
+			return "This character has developed venom glands that allow them to produce poison strong enough to kill any man. Sadly they do not have the fangs of a snake or spider to deliver this venom and have to resort using piercing or cutting weapons to apply it.";
+		}
+
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/morale.png",
+					text = "Piercing or cutting attacks poison the target."
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
+
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+		}
+
+		local function onTargetHit( _skill, _targetEntity, _bodyPart, _damageInflictedHitpoints, _damageInflictedArmor )
+		{
+			//TODO: _skill check weapon skill type here for piercing or cutting
+			if (_targetEntity.getCurrentProperties().IsImmuneToPoison || _damageInflictedHitpoints < this.Const.Combat.PoisonEffectMinDamage || _targetEntity.getHitpoints() <= 0)
+			{
+				return;
+			}
+
+			if (!_targetEntity.isAlive())
+			{
+				return;
+			}
+
+			if (_targetEntity.getFlags().has("undead"))
+			{
+				return;
+			}
+
+			if (!_targetEntity.isHiddenToPlayer())
+			{
+				if (this.m.SoundOnUse.len() != 0)
+				{
+					this.Sound.play(this.m.SoundOnUse[this.Math.rand(0, this.m.SoundOnUse.len() - 1)], this.Const.Sound.Volume.RacialEffect * 1.5, _targetEntity.getPos());
+				}
+
+				this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(_targetEntity) + " is poisoned");
+			}
+
+			this.spawnIcon("status_effect_54", _targetEntity.getTile());
+			local poison = _targetEntity.getSkills().getSkillByID("effects.spider_poison");
+
+			if (poison == null)
+			{
+				local effect = this.new("scripts/skills/effects/spider_poison_effect");
+				_targetEntity.getSkills().add(effect);
+			}
+			else
+			{
+				poison.resetTime();
+			}
+		}
+		::mods_addMember(o, "serpent_potion_effect", "onTargetHit", onTargetHit);
+	});
+
+	//"Locking Joints";
+	//"This character\'s body has mutated such that they can lock their limbs into certain positions almost indefinitely, allowing them to brace against blows while barely breaking a sweat.";
+	::mods_hookExactClass("skills/effects/skeleton_warrior_potion_effect", function (o)
+	{
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "Reduces the Fatigue cost of the \'Shieldwall\' skill by [color=" + this.Const.UI.Color.PositiveValue + "]" + 100 * (1 - this.Const.Combat.WeaponSpecFatigueMult) + "%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Defense" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Fatigue"
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
+
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+			onUpdate(_properties);
+			_properties.MeleeDefense += 10;
+			_properties.Stamina += 10;
+		}
+
+	});
+
+	//"Hyperactive Cell Growth";
+	//"This character\'s body has mutated to grow at an unnatural pace. In battle, this causes their wounds to close and heal within moments. Outside of battle, it causes unseemly growths, an unquenchable thirst, and disgustingly long finger nails. You once saw them lacerate both arms with a meat cleaver, screeching maniacally that it was \'the only way to keep it in check\'. Odd.";
+
+	//"Mutated Circulatory System";
+	//"This character\'s body has mutated and propagates poisons and other hazardous substances through the bloodstream much more slowly, allowing them to be disposed of without serious health effects. Curiously, this doesn\'t seem to affect their ability to get drunk.";
+	
+	//"Subdermal Reactivity";
+	//"It\'s just a flesh wound! This character\'s subdermal flesh has mutated and automatically reacts to sudden trauma, lessening the chance to suffer injuries in battle.";
+	::mods_hookExactClass("skills/effects/wiederganger_potion_effect", function (o)
+	{
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "The threshold to sustain injuries on getting hit is increased by [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+				},
+				{
+					id = 12,
+					type = "hint",
+					icon = "ui/tooltips/warning.png",
+					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+				}
+			];
+			return ret;
+		}
+
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+			onUpdate(_properties);
+			_properties.Hitpoints += 10;
+		}
+
+	});
 
 	//To Modify
-
 	::mods_hookExactClass("skills/effects/ifrit_potion_effect", function (o)
 	{
 		
@@ -734,6 +1065,9 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 	//"Visions";
 	//"This character has strange visions of things that have been and things to come. While less than cheery around the campfire, it does seem to give them a certain ability to connect and internalize new experiences faster.";
+
+	//"Ghastly Aura";
+	//"This character has consumed a substance, now in their bloodstream, that emits a kinetic field. This field gets stronger as their health deteriorates, eventually emitting a blue shimmer and producing a noticable effect on any blows that they deal, or that are dealt to them. They also claim to hear a constant, almost imperceptible whisper when alone, but that\'s probably superstition.";
 
 	delete this.anatomists_expanded.hook_effects;
 };

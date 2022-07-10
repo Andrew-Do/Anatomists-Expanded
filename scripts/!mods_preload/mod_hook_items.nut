@@ -1,5 +1,132 @@
 this.getroottable().anatomists_expanded.hook_items <- function ()
 {
+    ::mods_hookExactClass("items/misc/anatomist/alp_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 9: Alp";
+		    this.m.Description = "This draft, the result of intensive study into the so-called \'Third Eye\' of the Alp, allows whomever drinks it to see through the night as if it were day, see into the minds of others and torment them with nightmares! Blurry vision and hallucinations are expected while the body acclimates. It seems the body also changes to these potent mutagens. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Icon = "consumables/potion_34.png";
+            this.m.Value = 5000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "alp");
+
+            if (!_actor.getFlags().has("alp"))
+			{
+				_actor.getFlags().add("alp");
+			}
+
+            if (_actor.getSkills().getSkillByID("actives.nightmare_player") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/actives/nightmare_player"));
+            }
+
+            if (_actor.getSkills().getSkillByID("actives.sleep_player") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/actives/sleep_player"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.alp_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.honor_guard_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/honor_guard_potion_effect"));
+            }
+            this.Sound.play("sounds/enemies/dlc2/alp_death_0" + this.Math.rand(1, 5) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/alp_idle_0" + this.Math.rand(1, 12) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/alp_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/alp_nightmare_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Nightmare: Torment the victim's soul with nightmares, bringing them ever closer to oblivion."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Sleep: Lull them into the land of dreams."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/morale.png",
+                text = "Enhanced Eye Rods: Not affected by nighttime penalties" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+2[/color] Vision"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/morale.png",
+                text = "This character takes between [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color] and [color=" + this.Const.UI.Color.PositiveValue + "]50%[/color] less damage from piercing attacks, such as those from bows or spears" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"  
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
 
     ::mods_hookExactClass("items/misc/anatomist/direwolf_potion_item", function (o)
 	{
@@ -7,21 +134,34 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 		o.create = function()
 		{
             create();
-            this.m.Name = "Direwolf";
-		    this.m.Description = "This humoural concoction, borne from research into the dreaded direwolf, will turn even the clumsiest oaf into a lithe dancer of a warrior, able to gracefully move with the tides of battle long after lesser men succumb to fatigue! Mild akathisia after consuming is normal and expected.";
-            this.m.Value = 1000;
+            this.m.Name = "Sequence 9: Direwolf";
+		    this.m.Description = "This humoural concoction, borne from research into the dreaded direwolf, will turn even the clumsiest oaf into a lithe dancer of a warrior, able to gracefully move with the tides of battle long after lesser men succumb to fatigue! Mild akathisia after consuming is normal and expected.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Value = 5000;
         }
 
         local onUse = ::mods_getMember(o, "onUse");
 		o.onUse = function(_actor, _item = null)
         {
-            _actor.getSkills().add(this.new("scripts/skills/effects/direwolf_potion_effect"));
-            _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "werewolf");
 
-            if (_actor.getSkills().getSkillByID("perk.pathfinder") == null)
+            if (!_actor.getFlags().has("werewolf"))
+			{
+				_actor.getFlags().add("werewolf");
+			}
+            
+            if (_actor.getSkills().getSkillByID("racial.werewolf_player") == null)
             {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Pathfinder, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_pathfinder"));
+                _actor.getSkills().add(this.new("scripts/skills/racial/werewolf_player_racial"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.direwolf_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/direwolf_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.alp_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
             }
 
             if (_actor.getSkills().getSkillByID("perk.ptr_survival_instinct") == null)
@@ -79,6 +219,12 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
             result.push({
                 id = 11,
                 type = "text",
+                icon = "ui/icons/special.png",
+                text = "Direwolf: This character counts as a direwolf in skill checks, and inherits the direwolf's racial traits; that is inflicting more damage in proportion to missing health."
+            });
+            result.push({
+                id = 12,
+                type = "text",
                 icon = "ui/icons/morale.png",
                 text = "Elasticized Sinew: Attacks that miss have [color=" + this.Const.UI.Color.PositiveValue + "]50%[/color] of their Fatigue cost refunded" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Fatigue"
             });
@@ -86,13 +232,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 12,
                 type = "text",
                 icon = "ui/icons/morale.png",
-                text = "Enhanced Eye Rods: Not affected by nighttime penalties" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+3[/color] Vision" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Ranged Skill" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Skill"
-            });
-            result.push({
-                id = 12,
-                type = "text",
-                icon = "ui/icons/special.png",
-                text = "Pathfinder: Action Point costs for movement on all terrain is reduced by -1 to a minimum of 2 Action Points per tile, and Fatigue cost is reduced to half. Changing height levels also has no additional Action Point cost anymore."
+                text = "Enhanced Eye Rods: Not affected by nighttime penalties" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+2[/color] Vision"
             });
             result.push({
                 id = 12,
@@ -109,7 +249,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 65,
                 type = "hint",
                 icon = "ui/tooltips/warning.png",
-                text = "Mutates the body. A long period of sicknes is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
             });
             return result;
         }
@@ -122,15 +262,30 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 		o.create = function()
 		{
             create();
-            this.m.Name = "Vampire";
-		    this.m.Description = "Whoever drinks this incredible potion will find themselves in possession of the miraculous powers of the Necrosavant! Unfortunately, it does grant immortality. This may be considered a feature should the imbiber get a bit too comfortable drinking blood.";
+            this.m.Name = "Sequence 9: Vampire";
+		    this.m.Description = "Whoever drinks this incredible potion will find themselves in possession of the miraculous powers of the Necrosavant! Unfortunately, it doesn't grant immortality. Side effects might include immortality and removing old age.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
             this.m.Value = 10000;
         }
 
         local onUse = ::mods_getMember(o, "onUse");
 		o.onUse = function(_actor, _item = null)
         {
-            _actor.getSkills().add(this.new("scripts/skills/effects/necrosavant_potion_effect"));
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "vampire");
+
+            if (_actor.getSkills().hasSkill("trait.old"))
+            {
+                _actor.getSkills().removeByID("trait.old");
+            }
+
+            if (!_actor.getFlags().has("vampire"))
+			{
+				_actor.getFlags().add("vampire");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.necrosavant_potion") == null)
+            {
+                 _actor.getSkills().add(this.new("scripts/skills/effects/necrosavant_potion_effect"));
+            }
 
             if (_actor.getSkills().getSkillByID("perk.nine_lives") == null)
             {
@@ -138,17 +293,24 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 _actor.getSkills().add(this.new("scripts/skills/perks/perk_nine_lives"));
             }
 
-            if (_actor.getSkills().getSkillByID("perk.legend_darkflight") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendDarkflight, 1, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_darkflight"));
-            }
+            // if (_actor.getSkills().getSkillByID("perk.legend_darkflight") == null)
+            // {
+            //     _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendDarkflight, 1, false);
+            //     _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_darkflight"));
+            // }
 
             if (_actor.getSkills().getSkillByID("perk.ptr_bloodlust") == null)
             {
                 _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRBloodlust, 2, false);
                 _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_bloodlust"));
             }
+
+            if (_actor.getSkills().getSkillByID("perk.ptr_sanguinary") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSanguinary, 2, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/ptr_sanguinary"));
+            }
+
             this.Sound.play("sounds/enemies/vampire_hurt_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/vampire_death_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/vampire_idle_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -199,7 +361,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 11,
                 type = "text",
                 icon = "ui/icons/health.png",
-                text = "Heal [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color] of hitpoint damage inflicted on adjacent enemies that have blood" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+15[/color] Melee Skill."
+                text = "Parasitic Blood: Heal [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color] of hitpoint damage inflicted on adjacent enemies that have blood" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+15[/color] Melee Skill."
             });
             result.push({
                 id = 12,
@@ -211,13 +373,13 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 12,
                 type = "text",
                 icon = "ui/icons/special.png",
-                text = "Darkflight: Disapparate from your current location and reappear on the other side of the battlefield up to 6 tiles away."
+                text = "Bloodlust: Attacks on bleeding targets restore fatigue."
             });
             result.push({
                 id = 12,
                 type = "text",
                 icon = "ui/icons/special.png",
-                text = "Bloodlust: Every successful attack reduces current Fatigue by 5% per stack of Bleeding on the target and increases Fatigue Recovery by +1 per stack of Bleeding on the target. Bleeding inflicted by the attack, or killing a target, also counts towards the bonus."
+                text = "Sanguinary: Increases the chance to inflict fatalities and fatalities restore fatigue. Attacks against bleeding targets improve your morale."
             });
             result.push({
                 id = 65,
@@ -228,7 +390,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 65,
                 type = "hint",
                 icon = "ui/tooltips/warning.png",
-                text = "Mutates the body. A long period of sicknes is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
             });
             return result;
         }

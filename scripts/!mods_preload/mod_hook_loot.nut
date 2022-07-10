@@ -21,7 +21,9 @@ this.getroottable().anatomists_expanded.doPotionDrop <- function (_killer, _skil
 			count *= 2.0;
 		}
 
+		
 		local rand = this.Math.rand(1.0, 100.0);
+		//this.logInfo("Rolling for potion: " + rand + " vs " + chance * count)
 		//TODO: Fix testing code
 		//if (rand <= chance * count)
 		if (true)
@@ -35,6 +37,30 @@ this.getroottable().anatomists_expanded.doPotionDrop <- function (_killer, _skil
 
 this.getroottable().anatomists_expanded.hook_loot <- function ()
 {
+	::mods_hookExactClass("entity/tactical/enemies/alp", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/alp_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_demon_alp", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5;
+			local item = "scripts/items/misc/anatomist/demon_alp_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+	
 	::mods_hookExactClass("entity/tactical/enemies/direwolf", function (o)
 	{
 		local onDeath = ::mods_getMember(o, "onDeath");
@@ -43,6 +69,42 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 			onDeath(_killer, _skill, _tile, _fatalityType);
 			local chance = 2.5;
 			local item = "scripts/items/misc/anatomist/direwolf_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_white_direwolf", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5;
+			local item = "scripts/items/misc/anatomist/white_direwolf_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/vampire", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/necrosavant_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_vampire_lord", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5;
+			local item = "scripts/items/misc/anatomist/necrosavant_lord_potion_item";
 			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
 		}
 	});
