@@ -7,7 +7,7 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
 		this.m.Name = "Sequence 8: Lord";
 		this.m.Description = "This concoction, borne from research into the legendary necrosavant lord, further improves the qualities given in the sequence 9 potion, Vampire. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
 		this.m.IconLarge = "";
-		this.m.Icon = "consumables/potion_34.png";
+		this.m.Icon = "consumables/potion_20.png";
 		this.m.Value = 20000;
 	}
 
@@ -53,7 +53,7 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
 			id = 11,
 			type = "text",
 			icon = "ui/icons/special.png",
-			text = "Necrosavant Lord: Improves effects of parasitic blood to 25%." + this.Const.UI.Color.PositiveValue + "]+20[/color] Hitpoints." + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Skill."
+			text = "Necrosavant Lord: Improves effects of parasitic blood to 25%."+ "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Hitpoints." + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Skill."
 		});
 		result.push({
 			id = 12,

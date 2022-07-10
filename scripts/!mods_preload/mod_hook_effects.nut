@@ -241,7 +241,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 12,
 					type = "text",
 					icon = "ui/icons/fatigue.png",
-					text = "The Fatigue costs of the Rotation and Footwork skills are reduced by [color=" + this.Const.UI.Color.PositiveValue + "]50%[/color]" + "[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Initiative"
+					text = "The Fatigue costs of the Rotation and Footwork skills are reduced by [color=" + this.Const.UI.Color.PositiveValue + "]50%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Initiative"
 				},
 				{
 					id = 12,
@@ -264,7 +264,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 	//"Mutated Cornea";
 	//"This character\'s eyes have been permanently mutated and are now capable of detecting the subtlest movements of wind and air. While minor on its own, this allows them to better predict the trajectory of projectile attacks and better land hits on vulnerable parts of a target.";
-	::mods_hookExactClass("skills/effects/goblin_overseer_potion", function (o)
+	::mods_hookExactClass("skills/effects/goblin_overseer_potion_effect", function (o)
 	{
 		local getTooltip = ::mods_getMember(o, "getTooltip");
 		o.getTooltip = function()
@@ -284,7 +284,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/morale.png",
-					text = "An additional [color=" + this.Const.UI.Color.PositiveValue + "]5%[/color] of damage ignores armor when using bows or crossbows\n" + "[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Ranged Attack"  + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Ranged Defense"
+					text = "An additional [color=" + this.Const.UI.Color.PositiveValue + "]5%[/color] of damage ignores armor when using bows or crossbows" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Ranged Skill"  + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Ranged Defense"
 				},
 				{
 					id = 12,
@@ -299,7 +299,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		local onUpdate = ::mods_getMember(o, "onUpdate");
 		o.onUpdate = function(_properties)
 		{
-			onUpdate(_properties);
+			_properties.IsSharpshooter = true;
 			_properties.RangedSkill += 20;
 			_properties.RangedDefense += 20;
 		}
@@ -629,7 +629,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 			this.spawnIcon("status_effect_09", actor.getTile());
 			local hasMastery = this.getContainer().getActor().getFlags().has("vampire_8");
 			local lifesteal_percent = hasMastery ? 0.25 : 0.15;
-			
+
 			local hitpointsHealed = this.Math.round(_damageInflictedHitpoints * lifesteal_percent);
 
 			if (!actor.isHiddenToPlayer())

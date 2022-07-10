@@ -117,7 +117,7 @@ this.demon_alp_potion_item <- this.inherit("scripts/items/misc/anatomist/anatomi
             }
 
             this.Sound.play("sounds/enemies/dlc2/alp_death_0" + this.Math.rand(1, 5) + ".wav", this.Const.Sound.Volume.Inventory);
-            this.Sound.play("sounds/enemies/dlc2/alp_idle_0" + this.Math.rand(1, 12) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/alp_idle_0" + this.Math.rand(1, 9) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/dlc2/alp_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/dlc2/alp_nightmare_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
 
