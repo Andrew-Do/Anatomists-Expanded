@@ -5,10 +5,10 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
 		this.anatomist_potion_item.create();
 		this.m.ID = "misc.necrosavant_lord_potion_item";
 		this.m.Name = "Sequence 8: Lord";
-		this.m.Description = "This concoction, borne from research into the legendary demon alp, further improves the qualities given in the sequence 9 potion, Alp. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+		this.m.Description = "This concoction, borne from research into the legendary necrosavant lord, further improves the qualities given in the sequence 9 potion, Vampire. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
 		this.m.IconLarge = "";
 		this.m.Icon = "consumables/potion_34.png";
-		this.m.Value = 10000;
+		this.m.Value = 20000;
 	}
 
 	function getTooltip()
@@ -53,25 +53,25 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
 			id = 11,
 			type = "text",
 			icon = "ui/icons/special.png",
-			text = "King of Nightmares: Torment the victim's soul with nightmares, bringing them ever closer to oblivion. Improves the Nightmare skill."
+			text = "Necrosavant Lord: Improves effects of parasitic blood to 25%." + this.Const.UI.Color.PositiveValue + "]+20[/color] Hitpoints." + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Skill."
 		});
 		result.push({
 			id = 12,
 			type = "text",
 			icon = "ui/icons/special.png",
-			text = "Kingdom of Sleep: Lull them into your kingdom. Improves the Sleep skill."
+			text = "Darkflight: Disapparate from your current location and reappear on the other side of the battlefield up to 6 tiles away."
+		});
+		result.push({
+			id = 11,
+			type = "text",
+			icon = "ui/icons/morale.png",
+			text = "Synapse Blockage: Morale cannot be reduced below Steady\n" + "[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Resolve"
 		});
 		result.push({
 			id = 12,
 			type = "text",
 			icon = "ui/icons/special.png",
-			text = "Horrify: Blare out a piercing, unworldly sound that is more than likely to distress anyone unfortunate enough to hear it."
-		});
-		result.push({
-			id = 12,
-			type = "text",
-			icon = "ui/icons/special.png",
-			text = "Levitate: Float above the ground. You no longer need to walk like those peasants."
+			text = "Poison Immunity: With an undead body, poisons will trouble you no more."
 		});
 		result.push({
 			id = 65,
@@ -94,29 +94,50 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
 
 	function onUse( _actor, _item = null )
 	{
-		    this.getroottable().anatomists_expanded.doInjuries(_actor, "alp");
+		    this.getroottable().anatomists_expanded.doInjuries(_actor, "vampire");
 
-			if (!_actor.getFlags().has("alp_8"))
+			if (_actor.getSkills().hasSkill("trait.old"))
+            {
+                _actor.getSkills().removeByID("trait.old");
+            }
+
+			if (!_actor.getFlags().has("vampire"))
 			{
-				_actor.getFlags().add("alp_8");
+				_actor.getFlags().add("vampire");
 			}
 
-			if (_actor.getSkills().getSkillByID("effects.player_levitate") == null)
+			if (!_actor.getFlags().has("vampire_8"))
+			{
+				_actor.getFlags().add("vampire_8");
+			}
+
+			if (_actor.getSkills().getSkillByID("effects.necrosavant_potion") == null)
             {
-                _actor.getSkills().add(this.new("scripts/skills/passives/player_levitate"));
+                _actor.getSkills().add(this.new("scripts/skills/effects/necrosavant_potion_effect"));
             }
 
-			if (_actor.getSkills().getSkillByID("perk.legend_item_horrify") == null)
+			if (_actor.getSkills().getSkillByID("effects.ancient_priest_potion") == null)
             {
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_item_horrify"));
+                _actor.getSkills().add(this.new("scripts/skills/effects/ancient_priest_potion_effect"));
             }
 
-            this.Sound.play("sounds/enemies/dlc2/alp_death_0" + this.Math.rand(1, 5) + ".wav", this.Const.Sound.Volume.Inventory);
-            this.Sound.play("sounds/enemies/dlc2/alp_idle_0" + this.Math.rand(1, 12) + ".wav", this.Const.Sound.Volume.Inventory);
-            this.Sound.play("sounds/enemies/dlc2/alp_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
-            this.Sound.play("sounds/enemies/dlc2/alp_nightmare_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
+			if (_actor.getSkills().getSkillByID("perk.legend_darkflight") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendDarkflight, 3, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_darkflight"));
+            }
 
-            return this.anatomist_potion_item.onUse(_actor, _item);
+			if (_actor.getSkills().getSkillByID("perk.legend_poison_immunity") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendPoisonImmunity, 4, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_poison_immunity"));
+            }
+
+            this.Sound.play("sounds/enemies/vampire_hurt_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/vampire_death_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/vampire_idle_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+			
+			return this.anatomist_potion_item.onUse(_actor, _item);
 	}
 
 });

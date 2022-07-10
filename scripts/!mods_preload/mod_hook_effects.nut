@@ -284,7 +284,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/morale.png",
-					text = "An additional [color=" + this.Const.UI.Color.PositiveValue + "]5%[/color] of damage ignores armor when using bows or crossbows\n" + "[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Ranged Attack"  + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Ranged Defense"
+					text = "An additional [color=" + this.Const.UI.Color.PositiveValue + "]5%[/color] of damage ignores armor when using bows or crossbows\n" + "[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Ranged Attack"  + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Ranged Defense"
 				},
 				{
 					id = 12,
@@ -300,8 +300,8 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		o.onUpdate = function(_properties)
 		{
 			onUpdate(_properties);
-			_properties.RangedSkill += 10;
-			_properties.RangedDefense += 10;
+			_properties.RangedSkill += 20;
+			_properties.RangedDefense += 20;
 		}
 
 	});
@@ -551,28 +551,100 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 2,
 					type = "description",
 					text = this.getDescription()
-				},
-				{
+				}
+			];
+
+			if (this.getContainer().getActor().getFlags().has("vampire_8"))
+			{
+				ret.push({
 					id = 11,
 					type = "text",
 					icon = "ui/icons/health.png",
-					text = "Heal [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color] of hitpoint damage inflicted on adjacent enemies that have blood" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+15[/color] Melee Skill."
-				},
-				{
-					id = 12,
-					type = "hint",
-					icon = "ui/tooltips/warning.png",
-					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
-				}
-			];
+					text = "Heal [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color] of hitpoint damage inflicted on adjacent enemies that have blood"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 30 + "[/color] Hitpoints"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Melee Skill"
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "Heal [color=" + this.Const.UI.Color.PositiveValue + "]15%[/color] of hitpoint damage inflicted on adjacent enemies that have blood"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Hitpoints"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 5 + "[/color] Melee Skill"
+				});
+			}
+			
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
 			return ret;
 		}
 
 		local function onUpdate(_properties)
 		{
-			_properties.MeleeSkill += 15;
+			if (this.getContainer().getActor().getFlags().has("vampire_8"))
+			{
+				_properties.MeleeSkill += 15;
+				_properties.Hitpoints += 30;
+			}
+			else
+			{
+				_properties.MeleeSkill += 5;
+				_properties.Hitpoints += 10;
+			}
+			
 		}
 		::mods_addMember(o, "necrosavant_potion_effect", "onUpdate", onUpdate);
+
+		local lifesteal = ::mods_getMember(o, "lifesteal");
+		o.lifesteal = function( _damageInflictedHitpoints )
+		{
+			local actor = this.m.Container.getActor();
+			this.spawnIcon("status_effect_09", actor.getTile());
+			local hasMastery = this.getContainer().getActor().getFlags().has("vampire_8");
+			local lifesteal_percent = hasMastery ? 0.25 : 0.15;
+			
+			local hitpointsHealed = this.Math.round(_damageInflictedHitpoints * lifesteal_percent);
+
+			if (!actor.isHiddenToPlayer())
+			{
+				if (this.m.SoundOnUse.len() != 0)
+				{
+					this.Sound.play(this.m.SoundOnUse[this.Math.rand(0, this.m.SoundOnUse.len() - 1)], this.Const.Sound.Volume.RacialEffect, actor.getPos());
+				}
+
+				this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " heals for " + this.Math.min(actor.getHitpointsMax() - actor.getHitpoints(), hitpointsHealed) + " points");
+			}
+
+			actor.setHitpoints(this.Math.min(actor.getHitpointsMax(), actor.getHitpoints() + hitpointsHealed));
+			actor.onUpdateInjuryLayer();
+		}
 
 	});
 

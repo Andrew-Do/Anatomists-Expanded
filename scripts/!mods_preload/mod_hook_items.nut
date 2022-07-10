@@ -264,7 +264,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
             create();
             this.m.Name = "Sequence 9: Vampire";
 		    this.m.Description = "Whoever drinks this incredible potion will find themselves in possession of the miraculous powers of the Necrosavant! Unfortunately, it doesn't grant immortality. Side effects might include immortality and removing old age.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
-            this.m.Value = 10000;
+            this.m.Value = 15000;
         }
 
         local onUse = ::mods_getMember(o, "onUse");
@@ -293,22 +293,16 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 _actor.getSkills().add(this.new("scripts/skills/perks/perk_nine_lives"));
             }
 
-            // if (_actor.getSkills().getSkillByID("perk.legend_darkflight") == null)
-            // {
-            //     _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendDarkflight, 1, false);
-            //     _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_darkflight"));
-            // }
-
             if (_actor.getSkills().getSkillByID("perk.ptr_bloodlust") == null)
             {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRBloodlust, 2, false);
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRBloodlust, 1, false);
                 _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_bloodlust"));
             }
 
             if (_actor.getSkills().getSkillByID("perk.ptr_sanguinary") == null)
             {
                 _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSanguinary, 2, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/ptr_sanguinary"));
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_sanguinary"));
             }
 
             this.Sound.play("sounds/enemies/vampire_hurt_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -361,7 +355,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 11,
                 type = "text",
                 icon = "ui/icons/health.png",
-                text = "Parasitic Blood: Heal [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color] of hitpoint damage inflicted on adjacent enemies that have blood" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+15[/color] Melee Skill."
+                text = "Parasitic Blood: Heal [color=" + this.Const.UI.Color.PositiveValue + "]15%[/color] of hitpoint damage inflicted on adjacent enemies that have blood" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints." + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+5[/color] Melee Skill."
             });
             result.push({
                 id = 12,

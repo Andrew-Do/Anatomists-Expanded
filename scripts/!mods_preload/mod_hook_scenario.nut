@@ -137,6 +137,7 @@ this.getroottable().anatomists_expanded.hook_scenario <- function ()
 			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/demon_alp_potion_item"));
 
 			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/necrosavant_potion_item"));
+			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/necrosavant_lord_potion_item"));
 			this.World.Statistics.getFlags().set("isNecromancerPotionAcquired", false);
 			this.World.Statistics.getFlags().set("isWiedergangerPotionAcquired", false);
 			this.World.Statistics.getFlags().set("isFallenHeroPotionAcquired", false);
