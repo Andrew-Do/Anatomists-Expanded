@@ -967,6 +967,18 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					icon = "ui/icons/special.png",
 					text = "Piercing or cutting attacks poison the target with redback venom."
 				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/initiative.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 30 + "[/color] Initiative"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Melee Skill"
+				});
 			}
 			else
 			{
@@ -975,6 +987,18 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					type = "text",
 					icon = "ui/icons/special.png",
 					text = "Piercing or cutting attacks poison the target."
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/initiative.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Initiative"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 5 + "[/color] Melee Skill"
 				});
 			}
 			
@@ -991,6 +1015,17 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		local onUpdate = ::mods_getMember(o, "onUpdate");
 		o.onUpdate = function(_properties)
 		{
+			if (this.getContainer().getActor().getFlags().has("spider_8"))
+			{
+				_properties.Initiative += 30;
+				_properties.MeleeSkill += 15;
+			}
+			else
+			{
+				_properties.Initiative += 15;
+				_properties.MeleeSkill += 5;
+			}
+
 		}
 
 		local function onTargetHit( _skill, _targetEntity, _bodyPart, _damageInflictedHitpoints, _damageInflictedArmor )
@@ -1110,6 +1145,137 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 	//"Hyperactive Cell Growth";
 	//"This character\'s body has mutated to grow at an unnatural pace. In battle, this causes their wounds to close and heal within moments. Outside of battle, it causes unseemly growths, an unquenchable thirst, and disgustingly long finger nails. You once saw them lacerate both arms with a meat cleaver, screeching maniacally that it was \'the only way to keep it in check\'. Odd.";
+	::mods_hookExactClass("skills/effects/unhold_potion_effect", function (o)
+	{
+		local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+		{
+			local ret = [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				}
+			];
+
+			if (this.getContainer().getActor().getFlags().has("unhold_8") || this.getContainer().getActor().getFlags().has("ghoul_8"))
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "Heals [color=" + this.Const.UI.Color.PositiveValue + "]10[/color] hitpoints each turn. Cannot heal if poisoned."
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "Heals [color=" + this.Const.UI.Color.PositiveValue + "]5[/color] hitpoints each turn. Cannot heal if poisoned."
+				});
+			}
+
+			if (this.getContainer().getActor().getFlags().has("unhold_8"))
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/armor_body.png",
+					text = "Heals [color=" + this.Const.UI.Color.PositiveValue + "]10[/color] head and body armor each turn.  Cannot heal if poisoned."
+				});
+			}
+			
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
+			return ret;
+		}
+
+		local onTurnStart = ::mods_getMember(o, "onTurnStart");
+		o.onTurnStart = function(_properties)
+		{
+			local actor = this.getContainer().getActor();
+			local healthMissing = actor.getHitpointsMax() - actor.getHitpoints();
+			local healthAdded = this.Math.min(healthMissing, 5);
+
+			if (this.getContainer().getActor().getFlags().has("unhold_8") || this.getContainer().getActor().getFlags().has("ghoul_8"))
+			{
+				healthAdded = this.Math.min(healthMissing, 10);
+			}
+
+			if (this.getContainer().getActor().getFlags().has("unhold_8"))
+			{				
+				local totalBodyArmor = actor.getArmorMax(this.Const.BodyPart.Body);
+				local totalHeadArmor = actor.getArmorMax(this.Const.BodyPart.Head);
+				local currentBodyArmor = actor.getArmor(this.Const.BodyPart.Body);
+				local currentHeadArmor = actor.getArmor(this.Const.BodyPart.Head);
+				local missingBodyArmor = totalBodyArmor - currentBodyArmor;
+				local missingHeadArmor = totalHeadArmor - currentHeadArmor;
+				
+				local addedBodyArmor = this.Math.abs(this.Math.min(missingBodyArmor, 10));
+				local addedHeadArmor = this.Math.abs(this.Math.min(missingHeadArmor, 10));
+				local newBodyArmor = currentBodyArmor + addedBodyArmor;
+				local newHeadArmor = currentHeadArmor + addedHeadArmor;
+
+				if (addedBodyArmor > 0 || addedHeadArmor > 0)
+				{
+					if (!actor.getSkills().hasSkill("effects.spider_poison_effect") && !actor.getSkills().hasSkill("effects.legend_redback_spider_poison_effect") && !actor.getSkills().hasSkill("effects.legend_RSW_poison_effect"))
+					{
+						actor.setArmor(this.Const.BodyPart.Body, newBodyArmor);
+						actor.setArmor(this.Const.BodyPart.Head, newHeadArmor);
+						actor.setDirty(true);
+
+						if (!actor.isHiddenToPlayer())
+						{
+							this.spawnIcon("status_effect_79", actor.getTile());
+
+							if (this.m.SoundOnUse.len() != 0)
+							{
+								this.Sound.play(this.m.SoundOnUse[this.Math.rand(0, this.m.SoundOnUse.len() - 1)], this.Const.Sound.Volume.RacialEffect * 1.25, actor.getPos());
+							}
+
+							this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " regenerated " + addedBodyArmor + " points of body armor");
+							this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " regenerated " + addedHeadArmor + " points of head armor");
+						}
+					}
+				}
+			}
+			
+			if (healthAdded > 0)
+			{
+				if (!actor.getSkills().hasSkill("effects.spider_poison_effect") && !actor.getSkills().hasSkill("effects.legend_redback_spider_poison_effect") && !actor.getSkills().hasSkill("effects.legend_RSW_poison_effect"))
+				{
+					actor.setHitpoints(actor.getHitpoints() + healthAdded);
+					actor.setDirty(true);
+
+					if (!actor.isHiddenToPlayer())
+					{
+						this.spawnIcon("status_effect_79", actor.getTile());
+
+						if (this.m.SoundOnUse.len() != 0)
+						{
+							this.Sound.play(this.m.SoundOnUse[this.Math.rand(0, this.m.SoundOnUse.len() - 1)], this.Const.Sound.Volume.RacialEffect * 1.25, actor.getPos());
+						}
+
+						this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " heals for " + healthAdded + " points");
+					}
+				}
+			}
+
+			
+		}
+
+	});
 
 	//"Mutated Circulatory System";
 	//"This character\'s body has mutated and propagates poisons and other hazardous substances through the bloodstream much more slowly, allowing them to be disposed of without serious health effects. Curiously, this doesn\'t seem to affect their ability to get drunk.";
@@ -1157,7 +1323,6 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 	});
 
-	//To Modify
 	::mods_hookExactClass("skills/effects/ifrit_potion_effect", function (o)
 	{
 		

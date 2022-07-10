@@ -1,5 +1,552 @@
 this.getroottable().anatomists_expanded.hook_items <- function ()
 {
+    ::mods_hookExactClass("items/misc/anatomist/ancient_priest_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 8: Mountain";
+		    this.m.Description = "From research on the legendary rock unhold, this potion improves upon the previous sequence\'s, granting the drinker increased regeneration and creating natural armor on their body that regenerates.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Icon = "consumables/potion_32.png";
+            this.m.Value = 20000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "unhold");
+
+            if (_actor.getSkills().hasSkill("trait.tiny"))
+            {
+                _actor.getSkills().removeByID("trait.tiny");
+            }
+
+            if (!_actor.getSkills().hasSkill("trait.huge"))
+            {
+                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
+            }
+            
+            if (!_actor.getFlags().has("unhold"))
+			{
+				_actor.getFlags().add("unhold");
+			}
+
+            if (!_actor.getFlags().has("unhold_8"))
+			{
+				_actor.getFlags().add("unhold_8");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.unhold_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/unhold_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.ifrit_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/ifrit_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.orc_warrior_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
+            }
+
+            this.Sound.play("sounds/enemies/unhold_death_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/unhold_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/unhold_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Induces major growth."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "Heals [color=" + this.Const.UI.Color.PositiveValue + "]10[/color] hitpoints each turn. Cannot heal if poisoned."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/armor_body.png",
+                text = "Heals [color=" + this.Const.UI.Color.PositiveValue + "]10[/color] head and body armor each turn.  Cannot heal if poisoned."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/armor_body.png",
+                text = "This character\'s skin is hard and stone-like, granting [color=" + this.Const.UI.Color.PositiveValue + "]50[/color] points of natural armor"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Sensory Redundancy: [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
+    ::mods_hookExactClass("items/misc/anatomist/unhold_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 9: Unhold";
+		    this.m.Description = "This potion will grant near immortality and power to whomever drinks it! That\'s right, just like the dreaded Unhold, any lucky enough to consume this will have their wounds close mere moments after opening! Take it! Quickly! Don\'t think, act!\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Value = 10000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "unhold");
+
+            if (_actor.getSkills().hasSkill("trait.tiny"))
+            {
+                _actor.getSkills().removeByID("trait.tiny");
+            }
+
+            if (!_actor.getSkills().hasSkill("trait.huge"))
+            {
+                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
+            }
+
+            if (!_actor.getFlags().has("unhold"))
+			{
+				_actor.getFlags().add("unhold");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.unhold_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/unhold_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.wiederganger_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/wiederganger_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.colossus") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Colossus, 0, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_colossus"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.legend_muscularity") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendMuscularity, 1, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_muscularity"));
+            }
+
+            this.Sound.play("sounds/enemies/unhold_death_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/unhold_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/unhold_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Induces major growth."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "Heals [color=" + this.Const.UI.Color.PositiveValue + "]5[/color] hitpoints each turn. Cannot heal if poisoned."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "The threshold to sustain injuries on getting hit is increased by [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Colossus: Hitpoints are increased by [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color], which also reduces the chance to sustain debilitating injuries when being hit."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Muscularity: Put your full weight into every blow and gain [color=" + this.Const.UI.Color.PositiveValue + "]+10%[/color] of your current hitpoints as additional minimum and maximum damage, up to 50."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+    
+    ::mods_hookExactClass("items/misc/anatomist/webknecht_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 9: Spider";
+		    this.m.Description = "As any experienced beast hunter could tell you, what makes the overgrown arachnids known as Webknechts truly fearsome is their vicious poison. Imbimbing this potion grants the drinker the venom glands of a Webknecht and the ability to resist poisons as well as nightvision. The anatomist remarked that it was odd that this potion only granted three effects. Was he missing something? Where was the power of this species concentrated?\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Value = 5000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "spider");
+
+            if (!_actor.getFlags().has("spider"))
+			{
+				_actor.getFlags().add("spider");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.serpent_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.webknecht_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
+            }
+            
+            if (_actor.getSkills().getSkillByID("effects.alp_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
+            }
+
+            this.Sound.play("sounds/enemies/dlc2/giant_spider_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/giant_spider_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/giant_spider_hurt_0" + this.Math.rand(1, 7) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Venom Glands: Piercing or cutting attacks poison the target."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/initiative.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Initiative"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/melee_skill.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 5 + "[/color] Melee Skill"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Mutated Circulatory System: Immune to poison effects, including those of Webknechts and Goblins."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/morale.png",
+                text = "Enhanced Eye Rods: Not affected by nighttime penalties" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+2[/color] Vision"
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
+    ::mods_hookExactClass("items/misc/anatomist/wiederganger_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 8: Black Widow";
+		    this.m.Description = "It turns out that most the strength of this species is focused on in it's poison making abilities. With research into the legendary Redback Spider, this potion improves upon the poison of the previous sequence, allowing the drinker to poison your enemies with redback poison when cutting or piercing them. They also gain the ability to spit webs at their foes among other improvements.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Value = 10000;
+            this.m.Icon = "consumables/potion_31.png";
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "spider");
+
+            if (!_actor.getFlags().has("spider"))
+			{
+				_actor.getFlags().add("spider");
+			}
+
+            if (!_actor.getFlags().has("spider_8"))
+			{
+				_actor.getFlags().add("spider_8");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.serpent_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.perk_legend_item_web_skill") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_item_web_skill"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.nimble") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Nimble, 0, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_nimble"));
+            }
+
+            this.Sound.play("sounds/enemies/dlc2/giant_spider_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/giant_spider_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/giant_spider_hurt_0" + this.Math.rand(1, 7) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Venom Glands: Piercing or cutting attacks poison the target with redback poison."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/initiative.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Initiative"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/melee_skill.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Melee Skill"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Spit Web: Spit a web at your foes and trap them."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Nimble: Specialize in light armor! By nimbly dodging or deflecting blows, convert any hits to glancing hits. Hitpoint damage taken is reduced by up to [color=" + this.Const.UI.Color.PositiveValue + "]60%[/color], but lowered exponentially by the total penalty to Maximum Fatigue from body and head armor above 15."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
     ::mods_hookExactClass("items/misc/anatomist/serpent_potion_item", function (o)
 	{
         local create = ::mods_getMember(o, "create");
@@ -94,6 +641,18 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 type = "text",
                 icon = "ui/icons/special.png",
                 text = "Venom Glands: Piercing or cutting attacks poison the target."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/initiative.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Initiative"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/melee_skill.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 5 + "[/color] Melee Skill"
             });
             result.push({
                 id = 12,

@@ -85,6 +85,8 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 		}
 	});
 
+	//necrosavant
+
 	::mods_hookExactClass("entity/tactical/enemies/vampire", function (o)
 	{
 		local onDeath = ::mods_getMember(o, "onDeath");
@@ -109,17 +111,7 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 		}
 	});
 
-	::mods_hookExactClass("entity/tactical/enemies/legend_vampire_lord", function (o)
-	{
-		local onDeath = ::mods_getMember(o, "onDeath");
-		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
-		{
-			onDeath(_killer, _skill, _tile, _fatalityType);
-			local chance = 5;
-			local item = "scripts/items/misc/anatomist/necrosavant_lord_potion_item";
-			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
-		}
-	});
+	//goblin
 
 	::mods_hookExactClass("entity/tactical/goblin", function (o)
 	{
@@ -141,6 +133,145 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 			onDeath(_killer, _skill, _tile, _fatalityType);
 			local chance = 5;
 			local item = "scripts/items/misc/anatomist/goblin_grunt_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	//orc
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_orc_behemoth", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/orc_young_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_orc_elite", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 1.25;
+			local item = "scripts/items/misc/anatomist/orc_young_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/orc_berserker", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 1.25;
+			local item = "scripts/items/misc/anatomist/orc_young_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/orc_warrior", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 1.25;
+			local item = "scripts/items/misc/anatomist/orc_young_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/orc_young", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 1.25;
+			local item = "scripts/items/misc/anatomist/orc_young_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/orc_warlord", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5;
+			local item = "scripts/items/misc/anatomist/orc_warlord_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	//serpent
+
+	::mods_hookExactClass("entity/tactical/enemies/serpent", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/serpent_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	//spider
+
+	::mods_hookExactClass("entity/tactical/enemies/spider", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/webknecht_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_redback_spider", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/wiederganger_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	//unhold
+	::mods_hookExactClass("entity/tactical/enemies/unhold", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/unhold_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_rock_unhold", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5;
+			local item = "scripts/items/misc/anatomist/ancient_priest_potion_item";
 			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
 		}
 	});

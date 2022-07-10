@@ -128,7 +128,6 @@ this.getroottable().anatomists_expanded.hook_scenario <- function ()
 			// this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/research_notes_greenskins_item"));
 			// this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/research_notes_undead_item"));
 			// this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/research_notes_legendary_item"));
-			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/ancient_priest_potion_item"));
 
 			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/direwolf_potion_item"));
 			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/white_direwolf_potion_item"));
@@ -145,7 +144,10 @@ this.getroottable().anatomists_expanded.hook_scenario <- function ()
 			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/orc_warlord_potion_item"));
 
 			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/serpent_potion_item"));
-			
+
+			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/webknecht_potion_item"));
+			this.World.Assets.getStash().add(this.new("scripts/items/misc/anatomist/wiederganger_potion_item"));
+
 			this.World.Statistics.getFlags().set("isNecromancerPotionAcquired", false);
 			this.World.Statistics.getFlags().set("isWiedergangerPotionAcquired", false);
 			this.World.Statistics.getFlags().set("isFallenHeroPotionAcquired", false);
