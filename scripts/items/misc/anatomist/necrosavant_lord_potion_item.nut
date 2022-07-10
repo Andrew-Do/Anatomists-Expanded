@@ -71,7 +71,7 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
 			id = 12,
 			type = "text",
 			icon = "ui/icons/special.png",
-			text = "Poison Immunity: With an undead body, poisons will trouble you no more."
+			text = "Mutated Circulatory System: Immune to poison effects, including those of Webknechts and Goblins."
 		});
 		result.push({
 			id = 65,
@@ -127,10 +127,9 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
                 _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_darkflight"));
             }
 
-			if (_actor.getSkills().getSkillByID("perk.legend_poison_immunity") == null)
+			if (_actor.getSkills().getSkillByID("effects.webknecht_potion") == null)
             {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendPoisonImmunity, 4, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_poison_immunity"));
+                _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
             }
 
             this.Sound.play("sounds/enemies/vampire_hurt_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);

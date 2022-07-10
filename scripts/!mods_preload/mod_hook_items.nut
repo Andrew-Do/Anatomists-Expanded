@@ -1,5 +1,408 @@
 this.getroottable().anatomists_expanded.hook_items <- function ()
 {
+    ::mods_hookExactClass("items/misc/anatomist/serpent_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 9: Serpent";
+		    this.m.Description = "A quite interesting potion, according to the anatomist who made it. Although this species currently cannot support a sequence 8, this potion confers upon the drinker the ability to produce poison for their cutting and piercing attacks and be immune to various types of poisons. They also have developed the survival instinct of a snake and gain that species's pattern recognition skills. Sadly it does not greatly improve the user's physical attributes.";
+            this.m.Value = 5000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "serpent");
+
+            if (!_actor.getFlags().has("serpent"))
+			{
+				_actor.getFlags().add("serpent");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.serpent_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.webknecht_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.ptr_pattern_recognition") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRPatternRecognition, 0, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_pattern_recognition"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.ptr_survival_instinct") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSurvivalInstinct, 1, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_survival_instinct"));
+            }
+
+            this.Sound.play("sounds/enemies/orc_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/orc_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/orc_hurt_0" + this.Math.rand(1, 7) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Venom Glands: Piercing or cutting attacks poison the target."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Mutated Circulatory System: Immune to poison effects, including those of Webknechts and Goblins."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Pattern Recognition: Hitpoints are increased by [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color], which also reduces the chance to sustain debilitating injuries when being hit."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Survival Instinct: Fatigue Recovery is increased by [color=" + this.Const.UI.Color.PositiveValue + "]5%[/color] of your Maximum Fatigue after gear."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+    
+    ::mods_hookExactClass("items/misc/anatomist/orc_young_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 9: Orc";
+		    this.m.Description = "Many a general has wished orcs might be tamed, for if one could control the greenskins and direct their strength with the intellect of man, they would surely control an unstoppable force. With this, such fantasies are within reach!\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Value = 7500;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "orc");
+
+            if (_actor.getSkills().hasSkill("trait.tiny"))
+            {
+                _actor.getSkills().removeByID("trait.tiny");
+            }
+
+            if (!_actor.getSkills().hasSkill("trait.huge"))
+            {
+                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
+            }
+
+            if (!_actor.getFlags().has("orc"))
+			{
+				_actor.getFlags().add("orc");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.orc_young_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/orc_young_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.orc_warrior_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.colossus") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Colossus, 0, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_colossus"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.ptr_hale_and_hearty") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRHaleAndHearty, 1, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_hale_and_hearty"));
+            }
+
+            this.Sound.play("sounds/enemies/orc_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/orc_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/orc_hurt_0" + this.Math.rand(1, 7) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Induces major growth."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Shock Absorbant Wrists: Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+15%[/color] additional damage"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Sensory Redundancy: [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Colossus: Hitpoints are increased by [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color], which also reduces the chance to sustain debilitating injuries when being hit."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Hale and Hearty: Fatigue Recovery is increased by [color=" + this.Const.UI.Color.PositiveValue + "]5%[/color] of your Maximum Fatigue after gear."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
+    ::mods_hookExactClass("items/misc/anatomist/orc_warlord_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 8: Warlord";
+		    this.m.Description = "Borne from the study of the renown Orc Warlord, this potion improves upon that of the previous sequence, allowing one to wield heavy orc weapons with ease as well as letting an orc\'s rage flow through one\'s veins.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Value = 15000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "orc");
+
+            if (_actor.getSkills().hasSkill("trait.tiny"))
+            {
+                _actor.getSkills().removeByID("trait.tiny");
+            }
+
+            if (!_actor.getSkills().hasSkill("trait.huge"))
+            {
+                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
+            }
+
+            if (!_actor.getFlags().has("orc"))
+			{
+				_actor.getFlags().add("orc");
+			}
+
+            if (!_actor.getFlags().has("orc_8"))
+			{
+				_actor.getFlags().add("orc_8");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.orc_warlord_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/orc_warlord_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.orc_berserker_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/orc_berserker_potion_effect"));
+            }
+
+            this.Sound.play("sounds/enemies/orc_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/orc_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/orc_hurt_0" + this.Math.rand(1, 7) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Induces major growth."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Warlord: Improves upon the effects of the sequence 9 potion. \n[color=" + this.Const.UI.Color.PositiveValue + "]+15[/color]% Damage" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Improved Limbic System: Using orc weapons no longer imposes additional fatigue costs" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Fatigue"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Hyperactive Glands: This character gains two stacks of Rage each time they take hitpoint damage, and loses one stack at the end of each turn. Rage improves damage reduction and other combat stats."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+    
     ::mods_hookExactClass("items/misc/anatomist/goblin_grunt_potion_item", function (o)
 	{
         local create = ::mods_getMember(o, "create");
@@ -7,14 +410,14 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 		{
             create();
             this.m.Name = "Sequence 9: Goblin";
-		    this.m.Description = "Equal parts terrifying and annoying, the uncanny marksmanship of goblins has long been thought unobtainable by ordinary, self-respecting humans. With this wondrous potion, however, the discerning warrior can harness some of that latent skill and obtain the celerity inherent in these greenskins.\n\nUnfortunately, the anatomist says that this race does not have a sequence 8 currently. Side effects might include shrinking.";
+		    this.m.Description = "Equal parts terrifying and annoying, the uncanny marksmanship of goblins has long been thought unobtainable by ordinary, self-respecting humans. With this wondrous potion, however, the discerning warrior can harness some of that latent skill and obtain the celerity inherent in these greenskins. Side effects might include shrinking.\n\nUnfortunately, the anatomist says that this race is too feeble to have develop a sequence 8 potion.";
             this.m.Value = 5000;
         }
 
         local onUse = ::mods_getMember(o, "onUse");
 		o.onUse = function(_actor, _item = null)
         {
-            this.getroottable().anatomists_expanded.doInjuries(_actor, "vampire");
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "goblin");
 
             if (_actor.getSkills().hasSkill("trait.huge"))
             {
@@ -36,7 +439,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 _actor.getSkills().add(this.new("scripts/skills/effects/goblin_overseer_potion_effect"));
             }
 
-            if (_actor.getSkills().getSkillByID("effects.goblin_grunt_potion_effect") == null)
+            if (_actor.getSkills().getSkillByID("effects.goblin_grunt_potion") == null)
             {
                 _actor.getSkills().add(this.new("scripts/skills/effects/goblin_grunt_potion_effect"));
             }

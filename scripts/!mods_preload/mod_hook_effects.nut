@@ -720,7 +720,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/fatigue.png",
-					text = "Using orc weapons no longer imposes additional fatigue costs" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Fatigue"
+					text = "Using orc weapons no longer imposes additional fatigue costs" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Fatigue"
 				},
 				{
 					id = 12,
@@ -736,7 +736,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		o.onUpdate = function(_properties)
 		{
 			onUpdate(_properties);
-			_properties.Stamina += 20;
+			_properties.Stamina += 10;
 		}
 
 	});
@@ -758,20 +758,35 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 2,
 					type = "description",
 					text = this.getDescription()
-				},
-				{
+				}
+			];
+
+			if (this.getContainer().getActor().getFlags().has("orc_8"))
+			{
+				ret.push({
 					id = 11,
 					type = "text",
 					icon = "ui/icons/special.png",
 					text = "[color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Hitpoints"
-				},
-				{
-					id = 12,
-					type = "hint",
-					icon = "ui/tooltips/warning.png",
-					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
-				}
-			];
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "[color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+				});
+			}
+			
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
+
 			return ret;
 		}
 
@@ -779,7 +794,14 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		o.onUpdate = function(_properties)
 		{
 			onUpdate(_properties);
-			_properties.Hitpoints += 20;
+			if (this.getContainer().getActor().getFlags().has("orc_8"))
+			{
+				_properties.Hitpoints += 20;
+			}
+			else
+			{
+				_properties.Hitpoints += 10;
+			}
 		}
 
 	});
@@ -795,6 +817,12 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 			this.m.Name = "Shock Absorbant Wrists";
 		}
 
+		local getDescription = ::mods_getMember(o, "getDescription");
+		o.getDescription = function()
+		{
+			return "This character\'s wrists have mutated in such a way that the they dampen the initial shock of opposing forces. In more practical terms, this lets them hit harder. They can also make some pretty outlandish shadow puppets.";
+		}
+
 		local getTooltip = ::mods_getMember(o, "getTooltip");
 		o.getTooltip = function()
 		{
@@ -808,27 +836,49 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 2,
 					type = "description",
 					text = this.getDescription()
-				},
-				{
-					id = 11,
-					type = "text",
-					icon = "ui/icons/armor_damage.png",
-					text = "Attacks have an additional [color=" + this.Const.UI.Color.PositiveValue + "]+40%[/color] effectiveness against armor"
-				},
-				{
-					id = 12,
-					type = "hint",
-					icon = "ui/tooltips/warning.png",
-					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
 				}
 			];
+
+			if (this.getContainer().getActor().getFlags().has("orc_8"))
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+30%[/color] additional damage"
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+15%[/color] additional damage"
+				});
+			}
+			
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
+
 			return ret;
 		}
 
 		local onUpdate = ::mods_getMember(o, "onUpdate");
 		o.onUpdate = function(_properties)
 		{
-			_properties.DamageArmorMult += 0.4;
+			if (this.getContainer().getActor().getFlags().has("orc_8"))
+			{
+				_properties.DamageTotalMult *= 1.3;
+			}
+			else
+			{
+				_properties.DamageTotalMult *= 1.15;
+			}
 		}
 
 	});
@@ -876,7 +926,8 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 	});
 
-	//TODO: Rework effect to venom on piercing/cutting attacks
+	//"Venom Glands"
+	//"This character has developed venom glands that allow them to produce poison strong enough to kill any man. Sadly they do not have the fangs of a snake or spider to deliver this venom and have to resort using piercing or cutting weapons to apply it.";
 	::mods_hookExactClass("skills/effects/serpent_potion_effect", function (o)
 	{
 		local create = ::mods_getMember(o, "create");
@@ -905,20 +956,35 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 2,
 					type = "description",
 					text = this.getDescription()
-				},
-				{
-					id = 11,
-					type = "text",
-					icon = "ui/icons/morale.png",
-					text = "Piercing or cutting attacks poison the target."
-				},
-				{
-					id = 12,
-					type = "hint",
-					icon = "ui/tooltips/warning.png",
-					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
 				}
 			];
+
+			if (this.getContainer().getActor().getFlags().has("spider_8"))
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "Piercing or cutting attacks poison the target with redback venom."
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "Piercing or cutting attacks poison the target."
+				});
+			}
+			
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
+
 			return ret;
 		}
 
@@ -929,7 +995,6 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 		local function onTargetHit( _skill, _targetEntity, _bodyPart, _damageInflictedHitpoints, _damageInflictedArmor )
 		{
-			//TODO: _skill check weapon skill type here for piercing or cutting
 			if (_targetEntity.getCurrentProperties().IsImmuneToPoison || _damageInflictedHitpoints < this.Const.Combat.PoisonEffectMinDamage || _targetEntity.getHitpoints() <= 0)
 			{
 				return;
@@ -945,6 +1010,11 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 				return;
 			}
 
+			if (_skill.m.InjuriesOnBody != this.Const.Injury.PiercingBody && _skill.m.InjuriesOnBody != this.Const.Injury.CuttingBody)
+			{
+				return;
+			}
+
 			if (!_targetEntity.isHiddenToPlayer())
 			{
 				if (this.m.SoundOnUse.len() != 0)
@@ -956,17 +1026,40 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 			}
 
 			this.spawnIcon("status_effect_54", _targetEntity.getTile());
-			local poison = _targetEntity.getSkills().getSkillByID("effects.spider_poison");
 
-			if (poison == null)
+			if (this.getContainer().getActor().getFlags().has("spider_8"))
 			{
-				local effect = this.new("scripts/skills/effects/spider_poison_effect");
-				_targetEntity.getSkills().add(effect);
+				local poison = _targetEntity.getSkills().getSkillByID("effects.legend_redback_spider_poison");
+				if (!_targetEntity.getSkills().hasSkill("effects.stunned") && !_targetEntity.getCurrentProperties().IsImmuneToStun)
+				{
+					_targetEntity.getSkills().add(this.new("scripts/skills/effects/stunned_effect"));
+					this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(_targetEntity) + " is stunned");
+				}
+
+				if (poison == null)
+				{
+					_targetEntity.getSkills().add(this.new("scripts/skills/effects/legend_redback_spider_poison_effect"));
+				}
+				else
+				{
+					poison.resetTime();
+				}
 			}
 			else
 			{
-				poison.resetTime();
+				local poison = _targetEntity.getSkills().getSkillByID("effects.spider_poison");
+				if (poison == null)
+				{
+					local effect = this.new("scripts/skills/effects/spider_poison_effect");
+					_targetEntity.getSkills().add(effect);
+				}
+				else
+				{
+					poison.resetTime();
+				}
 			}
+
+			
 		}
 		::mods_addMember(o, "serpent_potion_effect", "onTargetHit", onTargetHit);
 	});

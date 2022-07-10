@@ -23,7 +23,7 @@ this.getroottable().anatomists_expanded.doPotionDrop <- function (_killer, _skil
 
 		
 		local rand = this.Math.rand(1.0, 100.0);
-		//this.logInfo("Rolling for potion: " + rand + " vs " + chance * count)
+		this.logInfo("Rolling for potion: " + rand + " vs " + chance * count)
 		//TODO: Fix testing code
 		//if (rand <= chance * count)
 		if (true)
@@ -140,18 +140,6 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 		{
 			onDeath(_killer, _skill, _tile, _fatalityType);
 			local chance = 5;
-			local item = "scripts/items/misc/anatomist/goblin_grunt_potion_item";
-			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
-		}
-	});
-
-	::mods_hookExactClass("entity/tactical/goblin_shaman", function (o)
-	{
-		local onDeath = ::mods_getMember(o, "onDeath");
-		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
-		{
-			onDeath(_killer, _skill, _tile, _fatalityType);
-			local chance = 2.5;
 			local item = "scripts/items/misc/anatomist/goblin_grunt_potion_item";
 			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
 		}
