@@ -1,5 +1,266 @@
 this.getroottable().anatomists_expanded.hook_items <- function ()
 {
+    
+    ::mods_hookExactClass("items/misc/anatomist/fallen_hero_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 8: Only Skin and Hunger";
+		    this.m.Description = "From research on the legendary skin ghoul, this potion grants the drinker minor regeneration, as well as improving the properties of the previous potion. The drinker seems to have gained an unusual sense for blood and every strike they make causes bleeds.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Icon = "consumables/potion_36.png";
+            this.m.Value = 10000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "ghoul");
+            
+            if (!_actor.getFlags().has("ghoul"))
+			{
+				_actor.getFlags().add("ghoul");
+			}
+
+            if (!_actor.getFlags().has("ghoul_8"))
+			{
+				_actor.getFlags().add("ghoul_8");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.nachzehrer_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/nachzehrer_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("effects.unhold_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/unhold_potion_effect"));
+            }
+            
+            if (_actor.getSkills().getSkillByID("effects.hyena_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/hyena_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.legend_lacerate") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendLacerate, 3, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_lacerate"));
+            }
+
+            this.Sound.play("sounds/enemies/ghoul_death_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/ghoul_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/ghoul_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/days_wounded.png",
+                text = "Hyperactive Tissue Growth: Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Initiative."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "Hyperactive Cell Growth: Heals [color=" + this.Const.UI.Color.PositiveValue + "]5[/color] hitpoints each turn. Cannot heal if poisoned."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "Subdermal Clotting: Damage received from the Bleeding status effect is reduced by [color=" + this.Const.UI.Color.NegativeValue + "]50%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Lacerate: Lust for blood courses through your veins, each stroke rips and tears with a ferocity unmatched. Cause minor but long lasting bleeding on any target you deal direct health damage to with any weapon. This effect stacks.",
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
+    ::mods_hookExactClass("items/misc/anatomist/nachzehrer_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 9: Ghoul";
+		    this.m.Description = "If one divorces the horror of the act from its utility, there are few phenomena more marvelous in nature than the Nachzehrer\'s ability to recover by eating the flesh of the dead. No longer! Now man himself may take on such qualities! This potion also allows the drinker to gain the speed and wild frenzy of the Nachzehrer.\n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Value = 5000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "ghoul");
+            
+            if (!_actor.getFlags().has("ghoul"))
+			{
+				_actor.getFlags().add("ghoul");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.nachzehrer_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/nachzehrer_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.legend_gruesome_feast") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendGruesomeFeast, 0, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_gruesome_feast"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.legend_alert") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendAlert, 1, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_alert"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.killing_frenzy") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.KillingFrenzy, 2, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_killing_frenzy"));
+            }
+
+            this.Sound.play("sounds/enemies/ghoul_death_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/ghoul_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/ghoul_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/days_wounded.png",
+                text = "Hyperactive Tissue Growth: Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Initiative."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Gruesome Feast: Taste of the forbidden flesh. Devour a recently departed corpse to gain strength and restore your own health by [color=" + this.Const.UI.Color.PositiveValue + "]50[/color] "
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = 	"Alert: Pay close attention at all times, surveying the surroundings and assessing every clue for an insight. Gain [color=" + this.Const.UI.Color.PositiveValue + "]+20%[/color] Initiative."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Killing Frenzy: Go into a killing frenzy! A kill increases all damage by [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color] for 2 turns. Does not stack, but another kill will reset the timer."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+    
     ::mods_hookExactClass("items/misc/anatomist/ancient_priest_potion_item", function (o)
 	{
         local create = ::mods_getMember(o, "create");

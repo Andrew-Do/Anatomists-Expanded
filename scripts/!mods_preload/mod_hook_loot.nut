@@ -275,6 +275,31 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
 		}
 	});
+
+	//nachzehrer
+	::mods_hookExactClass("entity/tactical/enemies/ghoul", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 1.25;
+			local item = "scripts/items/misc/anatomist/nachzehrer_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_skin_ghoul", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 2.5;
+			local item = "scripts/items/misc/anatomist/fallen_hero_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
 	
 	delete this.anatomists_expanded.hook_loot;
 };

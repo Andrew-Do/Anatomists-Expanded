@@ -422,7 +422,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 				{
 					id = 11,
 					type = "text",
-					icon = "ui/icons/morale.png",
+					icon = "ui/icons/health.png",
 					text = "Damage received from the Bleeding status effect is reduced by [color=" + this.Const.UI.Color.NegativeValue + "]50%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"  
 				},
 				{
@@ -491,9 +491,10 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 	::mods_hookExactClass("skills/effects/nachzehrer_potion_effect", function (o)
 	{
 		
-		function getDescription()
+		local getDescription = ::mods_getMember(o, "getDescription");
+		o.getDescription = function()
 		{
-			return "This character\'s body has mutated to regrow skin and muscle tissue much more quickly than normal. Deep injuries heal much faster than normal as a result. They also seem to have developed a hunger for red meat, but that\'s probably unrelated.";
+			return "This character\'s body has mutated to regrow skin and muscle tissue much more quickly than normal and they gain the speed of nachzehrer. Deep injuries heal much faster than normal as a result. They also seem to have developed a hunger for red meat, but that\'s probably unrelated.";
 		}
 		
 		local getTooltip = ::mods_getMember(o, "getTooltip");
@@ -509,29 +510,139 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 2,
 					type = "description",
 					text = this.getDescription()
-				},
-				{
+				}
+			];
+			
+			if (this.getContainer().getActor().getFlags().has("ghoul_8"))
+			{
+				ret.push({
 					id = 11,
 					type = "text",
 					icon = "ui/icons/days_wounded.png",
-					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints."
-				},
-				{
-					id = 12,
-					type = "hint",
-					icon = "ui/tooltips/warning.png",
-					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
-				}
-			];
+					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Initiative."
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/days_wounded.png",
+					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Initiative."
+				});
+			}
+			
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
 			return ret;
 		}
 
 		local function onUpdate(_properties)
 		{
-			_properties.Hitpoints += 10;
+			if (this.getContainer().getActor().getFlags().has("ghoul_8"))
+			{
+				_properties.Initiative += 20;
+			}
+			else
+			{
+				_properties.Initiative += 10;
+			}
+			
 		}
 		::mods_addMember(o, "nachzehrer_potion_effect", "onUpdate", onUpdate);
 
+	});
+
+	::mods_hookExactClass("skills/actives/legend_gruesome_feast", function (o)
+	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.Description = "Feast on a corpse to regain health and cure injuries. Will daze and disgust any non-ghoul sequence ally within four tiles.";
+			this.m.FatigueCost = 20;
+		}
+		
+		local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_user, _targetTile)
+		{
+			_targetTile = _user.getTile();
+
+		if (_targetTile.IsVisibleForPlayer)
+		{
+			if (this.Const.Tactical.GruesomeFeastParticles.len() != 0)
+			{
+				for( local i = 0; i < this.Const.Tactical.GruesomeFeastParticles.len(); i = i )
+				{
+					this.Tactical.spawnParticleEffect(false, this.Const.Tactical.GruesomeFeastParticles[i].Brushes, _targetTile, this.Const.Tactical.GruesomeFeastParticles[i].Delay, this.Const.Tactical.GruesomeFeastParticles[i].Quantity, this.Const.Tactical.GruesomeFeastParticles[i].LifeTimeQuantity, this.Const.Tactical.GruesomeFeastParticles[i].SpawnRate, this.Const.Tactical.GruesomeFeastParticles[i].Stages);
+					i = ++i;
+				}
+			}
+
+			if (_user.isDiscovered() && (!_user.isHiddenToPlayer() || _targetTile.IsVisibleForPlayer))
+				{
+					this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(_user) + " feasts on a corpse");
+				}
+			}
+
+			if (!_user.isHiddenToPlayer())
+			{
+				this.Time.scheduleEvent(this.TimeUnit.Virtual, 500, this.onRemoveCorpse, _targetTile);
+			}
+			else
+			{
+				this.onRemoveCorpse(_targetTile);
+			}
+
+			this.spawnBloodbath(_targetTile);
+			_user.setHitpoints(this.Math.min(_user.getHitpoints() + 50, _user.getHitpointsMax()));
+			local skills = _user.getSkills().getAllSkillsOfType(this.Const.SkillType.Injury);
+
+			foreach( s in skills )
+			{
+				s.removeSelf();
+			}
+
+			local actors = this.Tactical.Entities.getInstancesOfFaction(_user.getFaction());
+
+			foreach( a in actors )
+			{
+				if (a.getID() == _user.getID())
+				{
+					continue;
+				}
+
+				if (_user.getTile().getDistanceTo(a.getTile()) > 4)
+				{
+					continue;
+				}
+
+				if (a.getFaction() != _user.getFaction())
+				{
+					continue;
+				}
+
+				if (a.getFaction() != _user.getFaction())
+				{
+					continue;
+				}
+
+				if (a.getFlags().has("ghoul"))
+				{
+					continue;
+				}
+
+				a.getSkills().add(this.new("scripts/skills/effects/legend_dazed_effect"));
+				a.worsenMood(2.0, "Witnessed someone eat a corpse");
+			}
+
+			_user.onUpdateInjuryLayer();
+			return true;
+		}
 	});
 
 	//"Parasitic Blood";
