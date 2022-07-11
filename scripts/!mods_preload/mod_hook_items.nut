@@ -1,5 +1,272 @@
 this.getroottable().anatomists_expanded.hook_items <- function ()
 {
+    ::mods_hookExactClass("items/misc/anatomist/orc_warrior_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 7: Stollwurm";
+		    this.m.Description = "Feel your blood boil! Or, more to the point, don\'t! With this tincture, the burning blood of a lindwurm will flow through decidedly human veins, with the lucky subject none the wiser. Until they start bleeding, of course. Also improves the physical qualities of the drinker. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Icon = "consumables/potion_27.png";
+            this.m.Value = 15000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "wurm");
+            
+            if (!_actor.getFlags().has("wurm"))
+			{
+				_actor.getFlags().add("wurm");
+			}
+
+            if (!_actor.getFlags().has("wurm_8"))
+			{
+				_actor.getFlags().add("wurm_8");
+			}
+
+            if (_actor.getSkills().getSkillByID("effects.lindwurm_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/lindwurm_potion_effect"));
+            }
+
+            if (_actor.getSkills().getSkillByID("perk.ptr_family_pride") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRFamilyPride, 0, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_family_pride"));
+            }
+
+            this.Sound.play("sounds/enemies/lindwurm_death_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/lindwurm_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/lindwurm_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+            result.push({
+				id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
+				text = "This character\'s blood burns with acid, damaging adjacent attackers whenever they deal hitpoint damage"
+			});
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 50 + "[/color] Hitpoints"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/melee_skill.png",
+                text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+50%[/color] additional damage"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Sensory Redundancy: [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Colossus: Hitpoints are increased by [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color], which also reduces the chance to sustain debilitating injuries when being hit."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Muscularity: Put your full weight into every blow and gain [color=" + this.Const.UI.Color.PositiveValue + "]+10%[/color] of your current hitpoints as additional minimum and maximum damage, up to 50."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
+    ::mods_hookExactClass("items/misc/anatomist/lindwurm_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 8: Lindwurm";
+		    this.m.Description = "Feel your blood boil! Or, more to the point, don\'t! With this tincture, the burning blood of a lindwurm will flow through decidedly human veins, with the lucky subject none the wiser. Until they start bleeding, of course. Amazingly, the lindwurm is already a sequence 8 creature from the start. By imbimbing this potion, it will perfect your physique... \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Icon = "consumables/potion_27.png";
+            this.m.Value = 10000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "wurm");
+            
+            if (!_actor.getFlags().has("wurm"))
+			{
+				_actor.getFlags().add("wurm");
+			}
+
+            "trait.short_sighted",
+
+
+            if (_actor.getSkills().getSkillByID("effects.lindwurm_potion") == null)
+            {
+                _actor.getSkills().add(this.new("scripts/skills/effects/lindwurm_potion_effect"));
+            }
+
+            _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
+
+            if (_actor.getSkills().getSkillByID("perk.ptr_rising_star") == null)
+            {
+                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRRisingStar, 1, false);
+                _actor.getSkills().add(this.new("scripts/skills/perks/ptr_rising_star"));
+            }
+
+            this.Sound.play("sounds/enemies/lindwurm_death_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/lindwurm_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/lindwurm_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+            result.push({
+				id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
+				text = "Perfects your physique."
+			});
+            result.push({
+				id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
+				text = "This character\'s blood burns with acid, damaging adjacent attackers whenever they deal hitpoint damage"
+			});
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 25 + "[/color] Hitpoints"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/melee_skill.png",
+                text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+15%[/color] additional damage"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Sensory Redundancy: [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Rising Star: The potion will perfect the drinker's physique. They could be legend someday... Gain 2 perk points 5 levels after you take this perk. Experience Gain is increased by 20% for the next 5 levels and by 5% after that."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
     
     ::mods_hookExactClass("items/misc/anatomist/fallen_hero_potion_item", function (o)
 	{
@@ -278,40 +545,13 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "unhold");
 
-            if (_actor.getSkills().hasSkill("trait.tiny"))
-            {
-                _actor.getSkills().removeByID("trait.tiny");
-            }
-
-            if (!_actor.getSkills().hasSkill("trait.huge"))
-            {
-                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
-            }
-            
-            if (!_actor.getFlags().has("unhold"))
-			{
-				_actor.getFlags().add("unhold");
-			}
-
-            if (!_actor.getFlags().has("unhold_8"))
-			{
-				_actor.getFlags().add("unhold_8");
-			}
-
-            if (_actor.getSkills().getSkillByID("effects.unhold_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/unhold_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("effects.ifrit_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/ifrit_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("effects.orc_warrior_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
-            }
+            _actor.getSkills().removeByID("trait.tiny");
+            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
+            _actor.getFlags().add("unhold");
+            _actor.getFlags().add("unhold_8");
+            _actor.getSkills().add(this.new("scripts/skills/effects/unhold_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/ifrit_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
 
             this.Sound.play("sounds/enemies/unhold_death_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/unhold_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -419,42 +659,17 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "unhold");
 
-            if (_actor.getSkills().hasSkill("trait.tiny"))
-            {
-                _actor.getSkills().removeByID("trait.tiny");
-            }
+            _actor.getSkills().removeByID("trait.tiny");
+            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
+            _actor.getFlags().add("unhold");
+            _actor.getSkills().add(this.new("scripts/skills/effects/unhold_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/wiederganger_potion_effect"));
 
-            if (!_actor.getSkills().hasSkill("trait.huge"))
-            {
-                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Colossus, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_colossus"));
 
-            if (!_actor.getFlags().has("unhold"))
-			{
-				_actor.getFlags().add("unhold");
-			}
-
-            if (_actor.getSkills().getSkillByID("effects.unhold_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/unhold_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("effects.wiederganger_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/wiederganger_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.colossus") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Colossus, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_colossus"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.legend_muscularity") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendMuscularity, 1, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_muscularity"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendMuscularity, 1, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_muscularity"));
 
             this.Sound.play("sounds/enemies/unhold_death_0" + this.Math.rand(1, 6) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/unhold_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -563,25 +778,10 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "spider");
 
-            if (!_actor.getFlags().has("spider"))
-			{
-				_actor.getFlags().add("spider");
-			}
-
-            if (_actor.getSkills().getSkillByID("effects.serpent_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("effects.webknecht_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
-            }
-            
-            if (_actor.getSkills().getSkillByID("effects.alp_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
-            }
+            _actor.getFlags().add("spider");
+            _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
 
             this.Sound.play("sounds/enemies/dlc2/giant_spider_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/dlc2/giant_spider_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -691,31 +891,14 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "spider");
 
-            if (!_actor.getFlags().has("spider"))
-			{
-				_actor.getFlags().add("spider");
-			}
+            _actor.getFlags().add("spider");
+            _actor.getFlags().add("spider_8");
 
-            if (!_actor.getFlags().has("spider_8"))
-			{
-				_actor.getFlags().add("spider_8");
-			}
+            _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_item_web_skill"));
 
-            if (_actor.getSkills().getSkillByID("effects.serpent_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.perk_legend_item_web_skill") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_item_web_skill"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.nimble") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Nimble, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_nimble"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Nimble, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_nimble"));
 
             this.Sound.play("sounds/enemies/dlc2/giant_spider_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/dlc2/giant_spider_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -824,37 +1007,20 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "serpent");
 
-            if (!_actor.getFlags().has("serpent"))
-			{
-				_actor.getFlags().add("serpent");
-			}
+            _actor.getFlags().add("serpent");
 
-            if (_actor.getSkills().getSkillByID("effects.serpent_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
-            }
+            _actor.getSkills().add(this.new("scripts/skills/effects/serpent_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
 
-            if (_actor.getSkills().getSkillByID("effects.webknecht_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRPatternRecognition, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_pattern_recognition"));
 
-            if (_actor.getSkills().getSkillByID("perk.ptr_pattern_recognition") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRPatternRecognition, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_pattern_recognition"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSurvivalInstinct, 1, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_survival_instinct"));
 
-            if (_actor.getSkills().getSkillByID("perk.ptr_survival_instinct") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSurvivalInstinct, 1, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_survival_instinct"));
-            }
-            //TODO: Add serpent sounds
-
-            this.Sound.play("sounds/enemies/orc_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
-            this.Sound.play("sounds/enemies/orc_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
-            this.Sound.play("sounds/enemies/orc_hurt_0" + this.Math.rand(1, 7) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc6/snake_death_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc6/snake_idle_0" + this.Math.rand(1, 9) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc6/snake_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
 
             return this.anatomist_potion_item.onUse(_actor, _item);
         }
@@ -965,42 +1131,19 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "orc");
 
-            if (_actor.getSkills().hasSkill("trait.tiny"))
-            {
-                _actor.getSkills().removeByID("trait.tiny");
-            }
+            _actor.getSkills().removeByID("trait.tiny");
+            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"
 
-            if (!_actor.getSkills().hasSkill("trait.huge"))
-            {
-                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
-            }
+            _actor.getFlags().add("orc");
 
-            if (!_actor.getFlags().has("orc"))
-			{
-				_actor.getFlags().add("orc");
-			}
+            _actor.getSkills().add(this.new("scripts/skills/effects/orc_young_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
 
-            if (_actor.getSkills().getSkillByID("effects.orc_young_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/orc_young_potion_effect"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Colossus, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_colossus"));
 
-            if (_actor.getSkills().getSkillByID("effects.orc_warrior_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.colossus") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Colossus, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_colossus"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.ptr_hale_and_hearty") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRHaleAndHearty, 1, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_hale_and_hearty"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRHaleAndHearty, 1, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_hale_and_hearty"));
 
             this.Sound.play("sounds/enemies/orc_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/orc_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -1109,35 +1252,14 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "orc");
 
-            if (_actor.getSkills().hasSkill("trait.tiny"))
-            {
-                _actor.getSkills().removeByID("trait.tiny");
-            }
+            _actor.getSkills().removeByID("trait.tiny");
+            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"
 
-            if (!_actor.getSkills().hasSkill("trait.huge"))
-            {
-                _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
-            }
+            _actor.getFlags().add("orc");
+            _actor.getFlags().add("orc_8");
 
-            if (!_actor.getFlags().has("orc"))
-			{
-				_actor.getFlags().add("orc");
-			}
-
-            if (!_actor.getFlags().has("orc_8"))
-			{
-				_actor.getFlags().add("orc_8");
-			}
-
-            if (_actor.getSkills().getSkillByID("effects.orc_warlord_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/orc_warlord_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("effects.orc_berserker_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/orc_berserker_potion_effect"));
-            }
+            _actor.getSkills().add(this.new("scripts/skills/effects/orc_warlord_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/orc_berserker_potion_effect"));
 
             this.Sound.play("sounds/enemies/orc_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/orc_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -1385,30 +1507,12 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "alp");
 
-            if (!_actor.getFlags().has("alp"))
-			{
-				_actor.getFlags().add("alp");
-			}
+            _actor.getFlags().add("alp");
+            _actor.getSkills().add(this.new("scripts/skills/actives/nightmare_player"));
+            _actor.getSkills().add(this.new("scripts/skills/actives/sleep_player"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/honor_guard_potion_effect"));
 
-            if (_actor.getSkills().getSkillByID("actives.nightmare_player") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/actives/nightmare_player"));
-            }
-
-            if (_actor.getSkills().getSkillByID("actives.sleep_player") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/actives/sleep_player"));
-            }
-
-            if (_actor.getSkills().getSkillByID("effects.alp_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("effects.honor_guard_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/honor_guard_potion_effect"));
-            }
             this.Sound.play("sounds/enemies/dlc2/alp_death_0" + this.Math.rand(1, 5) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/dlc2/alp_idle_0" + this.Math.rand(1, 9) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/dlc2/alp_hurt_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -1512,31 +1616,14 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "werewolf");
 
-            if (!_actor.getFlags().has("werewolf"))
-			{
-				_actor.getFlags().add("werewolf");
-			}
-            
-            if (_actor.getSkills().getSkillByID("racial.werewolf_player") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/racial/werewolf_player_racial"));
-            }
+            _actor.getFlags().add("werewolf");
+            _actor.getSkills().add(this.new("scripts/skills/racial/werewolf_player_racial"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/direwolf_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
 
-            if (_actor.getSkills().getSkillByID("effects.direwolf_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/direwolf_potion_effect"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSurvivalInstinct, 1, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_survival_instinct"));
 
-            if (_actor.getSkills().getSkillByID("effects.alp_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/alp_potion_effect"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.ptr_survival_instinct") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSurvivalInstinct, 1, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_survival_instinct"));
-            }
             this.Sound.play("sounds/enemies/werewolf_idle_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/werewolf_idle_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/werewolf_idle_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -1640,38 +1727,19 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "vampire");
 
-            if (_actor.getSkills().hasSkill("trait.old"))
-            {
-                _actor.getSkills().removeByID("trait.old");
-            }
+            _actor.getSkills().removeByID("trait.old");
+            _actor.getFlags().add("vampire");
 
-            if (!_actor.getFlags().has("vampire"))
-			{
-				_actor.getFlags().add("vampire");
-			}
+            _actor.getSkills().add(this.new("scripts/skills/effects/necrosavant_potion_effect"));
 
-            if (_actor.getSkills().getSkillByID("effects.necrosavant_potion") == null)
-            {
-                 _actor.getSkills().add(this.new("scripts/skills/effects/necrosavant_potion_effect"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.NineLives, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_nine_lives"));
 
-            if (_actor.getSkills().getSkillByID("perk.nine_lives") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.NineLives, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_nine_lives"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.ptr_bloodlust") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRBloodlust, 1, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_bloodlust"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.ptr_sanguinary") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSanguinary, 2, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_sanguinary"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRBloodlust, 1, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_bloodlust"));
+            
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSanguinary, 2, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_sanguinary"));
 
             this.Sound.play("sounds/enemies/vampire_hurt_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/vampire_death_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);

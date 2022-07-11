@@ -96,25 +96,10 @@ this.demon_alp_potion_item <- this.inherit("scripts/items/misc/anatomist/anatomi
 	{
 		    this.getroottable().anatomists_expanded.doInjuries(_actor, "alp");
 
-			if (!_actor.getFlags().has("alp"))
-			{
-				_actor.getFlags().add("alp");
-			}
-
-			if (!_actor.getFlags().has("alp_8"))
-			{
-				_actor.getFlags().add("alp_8");
-			}
-
-			if (_actor.getSkills().getSkillByID("effects.player_levitate") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/passives/player_levitate"));
-            }
-
-			if (_actor.getSkills().getSkillByID("perk.legend_item_horrify") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_item_horrify"));
-            }
+			_actor.getFlags().add("alp");
+			_actor.getFlags().add("alp_8");
+			_actor.getSkills().add(this.new("scripts/skills/passives/player_levitate"));
+			_actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_item_horrify"));
 
             this.Sound.play("sounds/enemies/dlc2/alp_death_0" + this.Math.rand(1, 5) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/dlc2/alp_idle_0" + this.Math.rand(1, 9) + ".wav", this.Const.Sound.Volume.Inventory);

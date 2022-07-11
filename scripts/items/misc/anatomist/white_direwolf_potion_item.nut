@@ -96,39 +96,17 @@ this.white_direwolf_potion_item <- this.inherit("scripts/items/misc/anatomist/an
 	{
 		    this.getroottable().anatomists_expanded.doInjuries(_actor, "werewolf");
 
-			if (!_actor.getFlags().has("werewolf"))
-			{
-				_actor.getFlags().add("werewolf");
-			}
+			_actor.getFlags().add("werewolf");
+			_actor.getFlags().add("werewolf_8");
+			_actor.getSkills().add(this.new("scripts/skills/racial/werewolf_player_racial"));
+			_actor.getSkills().add(this.new("scripts/skills/actives/howl_player"));
 
-			if (!_actor.getFlags().has("werewolf_8"))
-			{
-				_actor.getFlags().add("werewolf_8");
-			}
+			_actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendBattleheart, 2, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_battleheart"));
 
-			if (_actor.getSkills().getSkillByID("racial.werewolf_player") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/racial/werewolf_player_racial"));
-            }
-
-			if (_actor.getSkills().getSkillByID("actives.howl_player") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/actives/howl_player"));
-            }
-
-			if (_actor.getSkills().getSkillByID("perk.legend_battleheart") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendBattleheart, 2, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_battleheart"));
-            }
-
-            if (_actor.getSkills().getSkillByID("perk.pathfinder") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Pathfinder, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_pathfinder"));
-            }
+			_actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Pathfinder, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_pathfinder"));
            
-
             this.Sound.play("sounds/enemies/werewolf_idle_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/werewolf_idle_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/werewolf_idle_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);

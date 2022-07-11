@@ -24,9 +24,8 @@ this.getroottable().anatomists_expanded.doPotionDrop <- function (_killer, _skil
 		
 		local rand = this.Math.rand(1.0, 100.0);
 		this.logInfo("Rolling for potion: " + rand + " vs " + chance * count)
-		//TODO: Fix testing code
-		//if (rand <= chance * count)
-		if (true)
+
+		if (rand <= chance * count)
 		{
 			local loot = this.new(item);
 			loot.drop(_tile);

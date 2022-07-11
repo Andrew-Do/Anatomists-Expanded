@@ -96,41 +96,18 @@ this.necrosavant_lord_potion_item <- this.inherit("scripts/items/misc/anatomist/
 	{
 		    this.getroottable().anatomists_expanded.doInjuries(_actor, "vampire");
 
-			if (_actor.getSkills().hasSkill("trait.old"))
-            {
-                _actor.getSkills().removeByID("trait.old");
-            }
+			_actor.getSkills().removeByID("trait.old");
 
-			if (!_actor.getFlags().has("vampire"))
-			{
-				_actor.getFlags().add("vampire");
-			}
+			_actor.getFlags().add("vampire");
 
-			if (!_actor.getFlags().has("vampire_8"))
-			{
-				_actor.getFlags().add("vampire_8");
-			}
+			_actor.getFlags().add("vampire_8");
+			_actor.getSkills().add(this.new("scripts/skills/effects/necrosavant_potion_effect"));
+			_actor.getSkills().add(this.new("scripts/skills/effects/ancient_priest_potion_effect"));
 
-			if (_actor.getSkills().getSkillByID("effects.necrosavant_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/necrosavant_potion_effect"));
-            }
+			_actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendDarkflight, 3, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_darkflight"));
 
-			if (_actor.getSkills().getSkillByID("effects.ancient_priest_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/ancient_priest_potion_effect"));
-            }
-
-			if (_actor.getSkills().getSkillByID("perk.legend_darkflight") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendDarkflight, 3, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_darkflight"));
-            }
-
-			if (_actor.getSkills().getSkillByID("effects.webknecht_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
-            }
+			_actor.getSkills().add(this.new("scripts/skills/effects/webknecht_potion_effect"));
 
             this.Sound.play("sounds/enemies/vampire_hurt_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/vampire_death_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);

@@ -462,26 +462,67 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 2,
 					type = "description",
 					text = this.getDescription()
-				},
-				{
-					id = 11,
-					type = "text",
-					icon = "ui/icons/special.png",
-					text = "This character\'s blood burns with acid, damaging adjacent attackers whenever they deal hitpoint damage" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
-				},
-				{
-					id = 12,
-					type = "hint",
-					icon = "ui/tooltips/warning.png",
-					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
 				}
 			];
+			ret.push({
+				id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
+				text = "This character\'s blood burns with acid, damaging adjacent attackers whenever they deal hitpoint damage"
+			});
+
+			if (this.getContainer().getActor().getFlags().has("wurm_8"))
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 50 + "[/color] Hitpoints"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+30%[/color] additional damage"
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 25 + "[/color] Hitpoints"
+				});
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/melee_skill.png",
+					text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+15%[/color] additional damage"
+				});
+			}
+			
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
+
 			return ret;
 		}
 
 		local function onUpdate(_properties)
 		{
-			_properties.Hitpoints += 10;
+			if (this.getContainer().getActor().getFlags().has("wurm_8"))
+			{
+				_properties.Hitpoints += 50;
+				_properties.DamageTotalMult *= 1.30;
+			}
+			{
+				_properties.Hitpoints += 25;
+				_properties.DamageTotalMult *= 1.15;
+			}
 		}
 		::mods_addMember(o, "lindwurm_potion_effect", "onUpdate", onUpdate);
 	});
