@@ -299,6 +299,55 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
 		}
 	});
+
+	//lindwurm
+	::mods_hookExactClass("entity/tactical/enemies/lindwurm", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5.0;
+			local item = "scripts/items/misc/anatomist/lindwurm_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_stollwurm", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5.0;
+			local item = "scripts/items/misc/anatomist/orc_warrior_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/schrat", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5.0;
+			local item = "scripts/items/misc/anatomist/schrat_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
+
+	::mods_hookExactClass("entity/tactical/enemies/legend_greenwood_schrat", function (o)
+	{
+		local onDeath = ::mods_getMember(o, "onDeath");
+		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
+		{
+			onDeath(_killer, _skill, _tile, _fatalityType);
+			local chance = 5.0;
+			local item = "scripts/items/misc/anatomist/fallen_hero_potion_item";
+			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
+		}
+	});
 	
 	delete this.anatomists_expanded.hook_loot;
 };

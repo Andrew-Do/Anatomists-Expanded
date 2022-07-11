@@ -1,5 +1,233 @@
 this.getroottable().anatomists_expanded.hook_items <- function ()
 {
+    ::mods_hookExactClass("items/misc/anatomist/ifrit_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 7: Green Glow in the Woods";
+		    this.m.Description = "From research on the legendary Greenwood Schrat, this potion improves upon the symbiotic relationship formed in the previous potion. Now the drinker can grow roots and branches out of their body to attack. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Icon = "consumables/potion_33.png";
+            this.m.Value = 15000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "schrat");
+
+            _actor.getFlags().add("schrat");
+            _actor.getFlags().add("schrat_8");
+            _actor.getSkills().add(this.new("scripts/skills/effects/schrat_potion_effect"));
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.CripplingStrikes, 1, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_crippling_strikes"));
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.LegendLacerate, 2, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_legend_lacerate"));
+
+            this.Sound.play("sounds/enemies/dlc2/schrat_shield_damage_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/schrat_hurt_shield_down_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/schrat_death_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+            result.push({
+				id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Gives you wisdom."
+			});
+            result.push({
+				id = 11,
+                type = "text",
+                icon = "ui/icons/armor_body.png",
+                text = "Wooden Carapace: Greatly reduces any form of piercing damage, but you take 33% more burning damage."
+			});
+            result.push({
+				id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Symbiotic Seeds: When taking damage more than or equal to 15% of your health, birth a minature greenwood schrat from your blood and surroundings to help you in combat."
+			});
+            result.push({
+                id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
+				text = "Retractable Roots: Immune to being knocked back or grabbed. Greenwood evolution: You can now send your roots out to attack, but it is very fatiguing. The damage is equal to the currently equipped weapon and -15% armor damage."
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Crippling Strikes and Lacerate: Causes even the meh blows to be impactful."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
+    ::mods_hookExactClass("items/misc/anatomist/schrat_potion_item", function (o)
+	{
+        local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+            create();
+            this.m.Name = "Sequence 8: Schrat";
+		    this.m.Description = "One of the rare sequence 8 creature in these lands. Though this race has lost much of it's former glory, it is still related to the legendary wisdom tree. This potion grants the drinker the properties of a schrat as well as unveil what is hidden in it's life code. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+            this.m.Icon = "consumables/potion_33.png";
+            this.m.Value = 10000;
+        }
+
+        local onUse = ::mods_getMember(o, "onUse");
+		o.onUse = function(_actor, _item = null)
+        {
+            this.getroottable().anatomists_expanded.doInjuries(_actor, "schrat");
+
+            _actor.getFlags().add("schrat");
+
+            _actor.getSkills().add(this.new("scripts/skills/traits/bright_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/schrat_potion_effect"));
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.Student, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_student"));
+
+            this.Sound.play("sounds/enemies/dlc2/schrat_shield_damage_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/schrat_hurt_shield_down_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
+            this.Sound.play("sounds/enemies/dlc2/schrat_death_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
+            return this.anatomist_potion_item.onUse(_actor, _item);
+        }
+
+        local getTooltip = ::mods_getMember(o, "getTooltip");
+		o.getTooltip = function()
+        {
+            local result = [
+                {
+                    id = 1,
+                    type = "title",
+                    text = this.getName()
+                },
+                {
+                    id = 2,
+                    type = "description",
+                    text = this.getDescription()
+                }
+            ];
+            result.push({
+                id = 66,
+                type = "text",
+                text = this.getValueString()
+            });
+
+            if (this.getIconLarge() != null)
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIconLarge(),
+                    isLarge = true
+                });
+            }
+            else
+            {
+                result.push({
+                    id = 3,
+                    type = "image",
+                    image = this.getIcon()
+                });
+            }
+            result.push({
+				id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Gives you wisdom."
+			});
+            result.push({
+				id = 11,
+                type = "text",
+                icon = "ui/icons/armor_body.png",
+                text = "Wooden Carapace: Greatly reduces any form of piercing damage, but you take 33% more burning damage."
+			});
+            result.push({
+				id = 11,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Symbiotic Seeds: When taking damage more than or equal to 15% of your health, birth a minature schrat from your blood and surroundings to help you in combat."
+			});
+            result.push({
+                id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
+				text = "Retractable Roots: Immune to being knocked back or grabbed"
+            });
+            result.push({
+                id = 12,
+                type = "text",
+                icon = "ui/icons/special.png",
+                text = "Student: Gain additional 20% experience from battle. At the eleventh character level, you gain an additional perk point. The bonus experience stays until level 99. When playing the Manhunters origin, your indebted get the perk point refunded at the seventh character level."
+            });
+            result.push({
+                id = 65,
+                type = "text",
+                text = "Right-click or drag onto the currently selected character in order to drink. This item will be consumed in the process."
+            });
+            result.push({
+                id = 65,
+                type = "hint",
+                icon = "ui/tooltips/warning.png",
+                text = "Mutates the body. A long period of sickness is expected. Under normal circumstances, drinking more than one mutation potion can severly cripple or even kill."
+            });
+            return result;
+        }
+    });
+
     ::mods_hookExactClass("items/misc/anatomist/orc_warrior_potion_item", function (o)
 	{
         local create = ::mods_getMember(o, "create");
@@ -7,7 +235,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 		{
             create();
             this.m.Name = "Sequence 7: Stollwurm";
-		    this.m.Description = "Feel your blood boil! Or, more to the point, don\'t! With this tincture, the burning blood of a lindwurm will flow through decidedly human veins, with the lucky subject none the wiser. Until they start bleeding, of course. Also improves the physical qualities of the drinker. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
+		    this.m.Description = "This potion further improves upon the previous sequence\'s. In addition to further improving the physqique of the drinker, they mutate organs that allow them to better take blows and negative statuses. \n\nYou can drink potions of the same sequence without serious consequences, but you will still have to deal with the sickness.";
             this.m.Icon = "consumables/potion_27.png";
             this.m.Value = 15000;
         }
@@ -16,27 +244,37 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 		o.onUse = function(_actor, _item = null)
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "wurm");
+
+            _actor.getSkills().removeByID("trait.short_sighted");
+            _actor.getSkills().removeByID("trait.fat");
+            _actor.getSkills().removeByID("trait.bleeder");
+            _actor.getSkills().removeByID("trait.ailing");
+            _actor.getSkills().removeByID("trait.fragile");
+            _actor.getSkills().removeByID("trait.asthmatic");
+            _actor.getSkills().removeByID("trait.clubfooted");
+            _actor.getSkills().removeByID("trait.night_blind");
+            _actor.getSkills().removeByID("trait.frail");
+
+            _actor.getSkills().add(this.new("scripts/skills/traits/eagle_eyes_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/tough_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/strong_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/quick_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/dexterous_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/iron_lungs_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/athletic_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/iron_jaw_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/lucky_trait"));
             
-            if (!_actor.getFlags().has("wurm"))
-			{
-				_actor.getFlags().add("wurm");
-			}
+            _actor.getFlags().add("wurm");
+            _actor.getFlags().add("wurm_8");
 
-            if (!_actor.getFlags().has("wurm_8"))
-			{
-				_actor.getFlags().add("wurm_8");
-			}
+            _actor.getSkills().add(this.new("scripts/skills/effects/lindwurm_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
+            _actor.getSkills().add(this.new("scripts/skills/effects/fallen_hero_potion_effect"));
 
-            if (_actor.getSkills().getSkillByID("effects.lindwurm_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/lindwurm_potion_effect"));
-            }
 
-            if (_actor.getSkills().getSkillByID("perk.ptr_family_pride") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRFamilyPride, 0, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_family_pride"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRFamilyPride, 1, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_family_pride"));
 
             this.Sound.play("sounds/enemies/lindwurm_death_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/lindwurm_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -87,37 +325,55 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 				id = 11,
 				type = "text",
 				icon = "ui/icons/special.png",
+				text = "Perfects your physique, removing negative traits and adding positive traits."
+			});
+            result.push({
+				id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
 				text = "This character\'s blood burns with acid, damaging adjacent attackers whenever they deal hitpoint damage"
 			});
             result.push({
                 id = 11,
                 type = "text",
                 icon = "ui/icons/health.png",
-                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 50 + "[/color] Hitpoints"
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Hitpoints"
             });
             result.push({
                 id = 11,
                 type = "text",
                 icon = "ui/icons/melee_skill.png",
-                text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+50%[/color] additional damage"
+                text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+15%[/color] additional damage"
             });
             result.push({
                 id = 12,
                 type = "text",
                 icon = "ui/icons/special.png",
-                text = "Sensory Redundancy: [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+                text = "Sensory Redundancy: [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Hitpoints"
             });
             result.push({
                 id = 12,
                 type = "text",
                 icon = "ui/icons/special.png",
-                text = "Colossus: Hitpoints are increased by [color=" + this.Const.UI.Color.PositiveValue + "]25%[/color], which also reduces the chance to sustain debilitating injuries when being hit."
+                text = "Reactive Muscle Tissue: This character accumulates no Fatigue from enemy attacks, whether they hit or miss"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Hitpoints"
             });
             result.push({
                 id = 12,
                 type = "text",
                 icon = "ui/icons/special.png",
-                text = "Muscularity: Put your full weight into every blow and gain [color=" + this.Const.UI.Color.PositiveValue + "]+10%[/color] of your current hitpoints as additional minimum and maximum damage, up to 50."
+                text = "Family Pride: Take pride in your bloodline. See the perk description for more."
             });
             result.push({
                 id = 65,
@@ -150,27 +406,34 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 		o.onUse = function(_actor, _item = null)
         {
             this.getroottable().anatomists_expanded.doInjuries(_actor, "wurm");
+
+            _actor.getSkills().removeByID("trait.short_sighted");
+            _actor.getSkills().removeByID("trait.fat");
+            _actor.getSkills().removeByID("trait.bleeder");
+            _actor.getSkills().removeByID("trait.ailing");
+            _actor.getSkills().removeByID("trait.fragile");
+            _actor.getSkills().removeByID("trait.asthmatic");
+            _actor.getSkills().removeByID("trait.clubfooted");
+            _actor.getSkills().removeByID("trait.night_blind");
+            _actor.getSkills().removeByID("trait.frail");
+
+            _actor.getSkills().add(this.new("scripts/skills/traits/eagle_eyes_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/tough_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/strong_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/quick_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/dexterous_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/iron_lungs_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/athletic_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/iron_jaw_trait"));
+            _actor.getSkills().add(this.new("scripts/skills/traits/lucky_trait"));
             
-            if (!_actor.getFlags().has("wurm"))
-			{
-				_actor.getFlags().add("wurm");
-			}
 
-            "trait.short_sighted",
+            _actor.getFlags().add("wurm");
 
+            _actor.getSkills().add(this.new("scripts/skills/effects/lindwurm_potion_effect"));
 
-            if (_actor.getSkills().getSkillByID("effects.lindwurm_potion") == null)
-            {
-                _actor.getSkills().add(this.new("scripts/skills/effects/lindwurm_potion_effect"));
-            }
-
-            _actor.getSkills().add(this.new("scripts/skills/effects/orc_warrior_potion_effect"));
-
-            if (_actor.getSkills().getSkillByID("perk.ptr_rising_star") == null)
-            {
-                _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRRisingStar, 1, false);
-                _actor.getSkills().add(this.new("scripts/skills/perks/ptr_rising_star"));
-            }
+            _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRRisingStar, 0, false);
+            _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_rising_star"));
 
             this.Sound.play("sounds/enemies/lindwurm_death_0" + this.Math.rand(1, 4) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/lindwurm_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
@@ -221,7 +484,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 				id = 11,
 				type = "text",
 				icon = "ui/icons/special.png",
-				text = "Perfects your physique."
+				text = "Perfects your physique, removing negative traits and adding positive traits."
 			});
             result.push({
 				id = 11,
@@ -233,19 +496,13 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 11,
                 type = "text",
                 icon = "ui/icons/health.png",
-                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 25 + "[/color] Hitpoints"
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Hitpoints"
             });
             result.push({
                 id = 11,
                 type = "text",
                 icon = "ui/icons/melee_skill.png",
                 text = "Attacks do [color=" + this.Const.UI.Color.PositiveValue + "]+15%[/color] additional damage"
-            });
-            result.push({
-                id = 12,
-                type = "text",
-                icon = "ui/icons/special.png",
-                text = "Sensory Redundancy: [color=" + this.Const.UI.Color.PositiveValue + "]33%[/color] chance to resist the Dazed, Staggered, Stunned, Distracted, and Withered status effects" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
             });
             result.push({
                 id = 12,
@@ -365,7 +622,13 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 11,
                 type = "text",
                 icon = "ui/icons/days_wounded.png",
-                text = "Hyperactive Tissue Growth: Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Initiative."
+                text = "Hyperactive Tissue Growth: Reduces the time it takes to heal from any injury by one day, down to a mininum of one day."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/initiative.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Initiative"
             });
             result.push({
                 id = 11,
@@ -377,7 +640,13 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 11,
                 type = "text",
                 icon = "ui/icons/health.png",
-                text = "Subdermal Clotting: Damage received from the Bleeding status effect is reduced by [color=" + this.Const.UI.Color.NegativeValue + "]50%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"
+                text = "Subdermal Clotting: Damage received from the Bleeding status effect is reduced by [color=" + this.Const.UI.Color.NegativeValue + "]50%[/color]"
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/health.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Hitpoints"
             });
             result.push({
                 id = 12,
@@ -493,7 +762,13 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 id = 11,
                 type = "text",
                 icon = "ui/icons/days_wounded.png",
-                text = "Hyperactive Tissue Growth: Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Initiative."
+                text = "Hyperactive Tissue Growth: Reduces the time it takes to heal from any injury by one day, down to a mininum of one day."
+            });
+            result.push({
+                id = 11,
+                type = "text",
+                icon = "ui/icons/initiative.png",
+                text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Initiative"
             });
             result.push({
                 id = 11,
@@ -1132,7 +1407,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
             this.getroottable().anatomists_expanded.doInjuries(_actor, "orc");
 
             _actor.getSkills().removeByID("trait.tiny");
-            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"
+            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
 
             _actor.getFlags().add("orc");
 
@@ -1253,7 +1528,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
             this.getroottable().anatomists_expanded.doInjuries(_actor, "orc");
 
             _actor.getSkills().removeByID("trait.tiny");
-            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"
+            _actor.getSkills().add(this.new("scripts/skills/traits/huge_trait"));
 
             _actor.getFlags().add("orc");
             _actor.getFlags().add("orc_8");
@@ -1737,7 +2012,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
 
             _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRBloodlust, 1, false);
             _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_bloodlust"));
-            
+
             _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSanguinary, 2, false);
             _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_sanguinary"));
 

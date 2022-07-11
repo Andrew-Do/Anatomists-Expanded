@@ -423,7 +423,13 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/health.png",
-					text = "Damage received from the Bleeding status effect is reduced by [color=" + this.Const.UI.Color.NegativeValue + "]50%[/color]" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Hitpoints"  
+					text = "Damage received from the Bleeding status effect is reduced by [color=" + this.Const.UI.Color.NegativeValue + "]50%[/color]"  
+				},
+				{
+					id = 11,
+					type = "text",
+					icon = "ui/icons/health.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Hitpoints"
 				},
 				{
 					id = 12,
@@ -477,7 +483,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/health.png",
-					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 50 + "[/color] Hitpoints"
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 30 + "[/color] Hitpoints"
 				});
 				ret.push({
 					id = 11,
@@ -492,7 +498,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/health.png",
-					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 25 + "[/color] Hitpoints"
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 15 + "[/color] Hitpoints"
 				});
 				ret.push({
 					id = 11,
@@ -516,11 +522,11 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		{
 			if (this.getContainer().getActor().getFlags().has("wurm_8"))
 			{
-				_properties.Hitpoints += 50;
+				_properties.Hitpoints += 30;
 				_properties.DamageTotalMult *= 1.30;
 			}
 			{
-				_properties.Hitpoints += 25;
+				_properties.Hitpoints += 15;
 				_properties.DamageTotalMult *= 1.15;
 			}
 		}
@@ -560,7 +566,13 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/days_wounded.png",
-					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+20[/color] Initiative."
+					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day."
+				});
+				result.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/initiative.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 20 + "[/color] Initiative"
 				});
 			}
 			else
@@ -569,7 +581,13 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					id = 11,
 					type = "text",
 					icon = "ui/icons/days_wounded.png",
-					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Initiative."
+					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day."
+				});
+				result.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/initiative.png",
+					text = "+[color=" + this.Const.UI.Color.PositiveValue + "]" + 10 + "[/color] Initiative"
 				});
 			}
 			
@@ -1035,10 +1053,23 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 
 	});
 
-	//"Flexile Ligaments";
-	//"This character\'s legs have mutated to respond much more rapidly and powerfully to external force. As a practical matter, they can maintain their center of balance and respond to nearly any attempt to push them back or uproot them.";
+	//"Schrat Symbiosis";
+	//"With the proper concoction, and implanting the heart of schrat into the body, the test subject can form a symbiosis with the heart, gaining the abilities and properties of a schrat.";
 	::mods_hookExactClass("skills/effects/schrat_potion_effect", function (o)
 	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.Name = "Schrat Symbiosis";
+		}
+
+		local getDescription = ::mods_getMember(o, "getDescription");
+		o.getDescription = function()
+		{
+			return "With the proper concoction, and implanting the heart of schrat into the body, the test subject can form a symbiosis with the heart, gaining the abilities and properties of a schrat.";
+		}
+
 		local getTooltip = ::mods_getMember(o, "getTooltip");
 		o.getTooltip = function()
 		{
@@ -1056,24 +1087,234 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 				{
 					id = 11,
 					type = "text",
-					icon = "ui/icons/special.png",
-					text = "Immune to being knocked back or grabbed" + "\n[color=" + this.Const.UI.Color.PositiveValue + "]+10[/color] Melee Defense"
-				},
-				{
-					id = 12,
-					type = "hint",
-					icon = "ui/tooltips/warning.png",
-					text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+					icon = "ui/icons/armor_body.png",
+					text = "Greatly reduces any form of piercing damage, but you take 33% more burning damage."
 				}
 			];
+
+			if (this.getContainer().getActor().getFlags().has("schrat_8"))
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "When taking damage more than or equal to 15% of your health, birth a minature greenwood schrat from your blood and surroundings to help you in combat."
+				});
+			}
+			else
+			{
+				ret.push({
+					id = 11,
+					type = "text",
+					icon = "ui/icons/special.png",
+					text = "When taking damage more than or equal to 15% of your health, birth a minature schrat from your blood and surroundings to help you in combat."
+				});
+			}
+
+			ret.push({
+				id = 11,
+				type = "text",
+				icon = "ui/icons/special.png",
+				text = "Immune to being knocked back or grabbed"
+			});
+
+			ret.push({
+				id = 12,
+				type = "hint",
+				icon = "ui/tooltips/warning.png",
+				text = "Further mutations may cause this character's genes to spiral out of control, crippling them"
+			});
+
 			return ret;
 		}
 
 		local onUpdate = ::mods_getMember(o, "onUpdate");
 		o.onUpdate = function(_properties)
 		{
-			onUpdate(_properties);
-			_properties.MeleeDefense += 10;
+			_properties.IsImmuneToKnockBackAndGrab = true;
+
+			if (this.getContainer().getActor().getFlags().has("schrat_8"))
+			{
+				if (!this.m.Container.hasSkill("actives.uproot"))
+				{
+					this.m.Container.add(this.new("scripts/skills/actives/uproot_skill"));
+				}
+
+				if (!this.m.Container.hasSkill("actives.uproot_zoc"))
+				{
+					this.m.Container.add(this.new("scripts/skills/actives/uproot_zoc_skill"));
+				}
+			}
+			
+		}
+
+		local function onRemoved()
+		{
+			if (this.getContainer().getActor().getFlags().has("schrat_8"))
+			{
+				this.m.Container.removeByID("actives.uproot");
+				this.m.Container.removeByID("actives.uproot_zoc");
+			}
+		}
+		::mods_addMember(o, "schrat_potion_effect", "onRemoved", onRemoved);
+
+		local function onBeforeDamageReceived( _attacker, _skill, _hitInfo, _properties )
+		{
+			if (_skill == null)
+			{
+				return;
+			}
+
+			switch(_hitInfo.DamageType)
+			{
+			case this.Const.Damage.DamageType.Piercing:
+				if (_skill == null)
+				{
+					_properties.DamageReceivedRegularMult *= 0.25;
+				}
+				else if (_skill.isRanged())
+				{
+					local weapon = _skill.getItem();
+
+					if (weapon != null && weapon.isItemType(this.Const.Items.ItemType.Weapon))
+					{
+						if (weapon.isWeaponType(this.Const.Items.WeaponType.Bow) || weapon.isWeaponType(this.Const.Items.WeaponType.Crossbow))
+						{
+							_properties.DamageReceivedRegularMult *= 0.25;
+						}
+						else if (weapon.isWeaponType(this.Const.Items.WeaponType.Throwing))
+						{
+							_properties.DamageReceivedRegularMult *= 0.5;
+						}
+						else
+						{
+							_properties.DamageReceivedRegularMult *= 0.5;
+						}
+					}
+					else
+					{
+						_properties.DamageReceivedRegularMult *= 0.2;
+					}
+				}
+
+				break;
+
+			case this.Const.Damage.DamageType.Burning:
+				_properties.DamageReceivedRegularMult *= 1.33;
+				break;
+			}
+		}
+		::mods_addMember(o, "schrat_potion_effect", "onBeforeDamageReceived", onBeforeDamageReceived);
+
+		local function onDamageReceived( _attacker, _damageHitpoints, _damageArmor )
+		{
+			local actor = this.getContainer().getActor();
+
+			if (_damageHitpoints >= actor.getHitpointsMax() * 0.25)
+			{
+				local candidates = [];
+				local myTile = actor.getTile();
+
+				for( local i = 0; i < 6; i = i )
+				{
+					if (!myTile.hasNextTile(i))
+					{
+					}
+					else
+					{
+						local nextTile = myTile.getNextTile(i);
+
+						if (nextTile.IsEmpty && this.Math.abs(myTile.Level - nextTile.Level) <= 1)
+						{
+							candidates.push(nextTile);
+						}
+					}
+
+					i = ++i;
+				}
+
+				if (candidates.len() != 0)
+				{
+					local spawnTile = candidates[this.Math.rand(0, candidates.len() - 1)];
+					local sapling = this.Tactical.spawnEntity("scripts/entity/tactical/enemies/schrat_small", spawnTile.Coords);
+					//local sapling = this.Tactical.spawnEntity("scripts/entity/tactical/enemies/legend_greenwood_schrat_small", spawnTile.Coords);
+					sapling.setFaction(actor.getFaction() == this.Const.Faction.Player ? this.Const.Faction.PlayerAnimals : actor.getFaction());
+					sapling.riseFromGround();
+				}
+			}
+		}
+		::mods_addMember(o, "schrat_potion_effect", "onTargetHit", onDamageReceived);
+
+	});
+
+	::mods_hookExactClass("skills/actives/uproot_zoc_skill", function (o)
+	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.Name = "Uproot (Circle)";
+			this.m.Description = "Send out roots around you to hold and damage an enemy";
+			this.m.FatigueCost = 40;
+		}
+
+		local function getTooltip()
+		{
+			local p = this.getContainer().getActor().getCurrentProperties();
+			return [
+				{
+					id = 1,
+					type = "title",
+					text = this.getName()
+				},
+				{
+					id = 2,
+					type = "description",
+					text = this.getDescription()
+				},
+				{
+					id = 3,
+					type = "text",
+					text = this.getCostString()
+				},
+				{
+					id = 4,
+					type = "text",
+					icon = "/ui/icons/health.png",
+					text = "Inflicts [color=" + this.Const.UI.Color.DamageValue + "]" + p.DamageRegularMin + "[/color] - [color=" + this.Const.UI.Color.DamageValue + "]" + p.DamageRegularMax + "[/color] damage"
+				},
+				{
+					id = 5,
+					type = "text",
+					icon = "/ui/icons/special.png",
+					text = "Uproot can target the ground in a circle around you."
+				}
+			];
+		}
+		::mods_addMember(o, "schrat_potion_effect", "getTooltip", getTooltip);
+
+	});
+
+	::mods_hookExactClass("skills/actives/uproot_skill", function (o)
+	{
+		local create = ::mods_getMember(o, "create");
+		o.create = function()
+		{
+			create();
+			this.m.FatigueCost = 40;
+		}
+
+		local onUpdate = ::mods_getMember(o, "onUpdate");
+		o.onUpdate = function(_properties)
+		{
+			local _actor = this.getContainer().getActor();
+
+			if (_actor.getFaction() != this.Const.Faction.PlayerAnimals && _actor.getFaction() != this.Const.Faction.Player)
+			{
+				_properties.DamageRegularMin += 70;
+				_properties.DamageRegularMax += 100;
+			}
+			_properties.DamageArmorMult *= 0.85;
 		}
 
 	});
