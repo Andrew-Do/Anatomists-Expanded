@@ -568,7 +568,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					icon = "ui/icons/days_wounded.png",
 					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day."
 				});
-				result.push({
+				ret.push({
 					id = 11,
 					type = "text",
 					icon = "ui/icons/initiative.png",
@@ -583,7 +583,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 					icon = "ui/icons/days_wounded.png",
 					text = "Reduces the time it takes to heal from any injury by one day, down to a mininum of one day."
 				});
-				result.push({
+				ret.push({
 					id = 11,
 					type = "text",
 					icon = "ui/icons/initiative.png",

@@ -41,7 +41,7 @@ this.getroottable().anatomists_expanded.hook_scenario <- function ()
 		o.create = function()
 		{
 			create();
-			this.m.Description = "[p=c][img]gfx/ui/events/event_181.png[/img][/p][p]Fueled by an unquenchable thirst for knowledge, the Anatomists have spent years dissecting the exotic and the alien. With social mores dogging their research, however, they\'ve decided to form a mercenary company to acquire new source of fresh specimens.\n\n[color=#bcad8c]Anatomists:[/color] Start with three elite anatomists and high funds. Doubles the anatomist drop chance (base 5%) for potions.\n[color=#bcad8c]Advanced Research:[/color] Characters with the resilient perk can take one more potion.[/p]";
+			this.m.Description = "[p=c][img]gfx/ui/events/event_181.png[/img][/p][p]Fueled by an unquenchable thirst for knowledge, the Anatomists have spent years dissecting the exotic and the alien. With social mores dogging their research, however, they\'ve decided to form a mercenary company to acquire new source of fresh specimens.\n\n[color=#bcad8c]Anatomists:[/color] Start with three elite anatomists and high funds. Doubles the anatomist drop chance for potions.\n[color=#bcad8c]Advanced Research:[/color] Characters with the resilient perk can withstand mutations from up to two sequences.[/p]";
 		}
 
 		//Modify the characters here and replace the function

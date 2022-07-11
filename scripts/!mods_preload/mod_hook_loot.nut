@@ -232,7 +232,7 @@ this.getroottable().anatomists_expanded.hook_loot <- function ()
 		o.onDeath = function(_killer, _skill, _tile, _fatalityType)
 		{
 			onDeath(_killer, _skill, _tile, _fatalityType);
-			local chance = 2.5;
+			local chance = 1.25;
 			local item = "scripts/items/misc/anatomist/webknecht_potion_item";
 			this.getroottable().anatomists_expanded.doPotionDrop(_killer, _skill, _tile, _fatalityType, chance, item);
 		}
