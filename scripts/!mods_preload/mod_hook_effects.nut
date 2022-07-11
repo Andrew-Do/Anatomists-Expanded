@@ -1313,7 +1313,7 @@ this.getroottable().anatomists_expanded.hook_effects <- function ()
 		}
 
 		local onTurnStart = ::mods_getMember(o, "onTurnStart");
-		o.onTurnStart = function(_properties)
+		o.onTurnStart = function()
 		{
 			local actor = this.getContainer().getActor();
 			local healthMissing = actor.getHitpointsMax() - actor.getHitpoints();

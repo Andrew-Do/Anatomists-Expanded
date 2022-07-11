@@ -9,5 +9,6 @@ gt.anatomists_expanded <- {};
 	gt.anatomists_expanded.hook_effects();
 	gt.anatomists_expanded.hook_items();
 	gt.anatomists_expanded.hook_loot();
+	gt.anatomists_expanded.hook_enemies();
 	
 });

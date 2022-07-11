@@ -850,6 +850,7 @@ this.getroottable().anatomists_expanded.hook_items <- function ()
                 _actor.getBackground().addPerk(this.Const.Perks.PerkDefs.PTRSurvivalInstinct, 1, false);
                 _actor.getSkills().add(this.new("scripts/skills/perks/perk_ptr_survival_instinct"));
             }
+            //TODO: Add serpent sounds
 
             this.Sound.play("sounds/enemies/orc_death_0" + this.Math.rand(1, 8) + ".wav", this.Const.Sound.Volume.Inventory);
             this.Sound.play("sounds/enemies/orc_flee_0" + this.Math.rand(1, 3) + ".wav", this.Const.Sound.Volume.Inventory);
